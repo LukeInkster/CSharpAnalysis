@@ -10,3 +10,5 @@ C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analy
 C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analysis\obj\Debug\Analysis.csprojResolveAssemblyReference.cache
 C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analysis\obj\Debug\CSharpAnalysis.exe
 C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analysis\obj\Debug\CSharpAnalysis.pdb
+C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analysis\bin\Debug\Antlr4.Runtime.dll
+C:\Users\luke.inkster\Documents\Visual Studio 2015\Projects\CSharpAnalysis\Analysis\bin\Debug\Antlr4.Runtime.xml

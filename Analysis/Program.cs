@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
-using ConsoleApplication1;
+using CSharpAnalysis;
 
 namespace CSharpAnalysis
 {
@@ -24,6 +24,7 @@ namespace CSharpAnalysis
                 parser.RemoveErrorListeners();
                 parser.AddErrorListener(new BaseErrorListener());
 
+                var visitor = new CSharpParserBaseVisitor<int>();
                 var builtParseTree = parser.BuildParseTree;
                 Console.WriteLine(parser.compilation_unit());
                 Console.ReadLine();

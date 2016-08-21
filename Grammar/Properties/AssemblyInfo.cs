@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConsoleApplication1")]
+[assembly: AssemblyTitle("CSharpAnalysis")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Xero")]
-[assembly: AssemblyProduct("ConsoleApplication1")]
-[assembly: AssemblyCopyright("Copyright © Xero 2016")]
+[assembly: AssemblyProduct("CSharpAnalysis")]
+[assembly: AssemblyCopyright("Luke Inkster")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

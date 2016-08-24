@@ -32,10 +32,9 @@ namespace CSharpAnalysis
                 var compilationUnit = parser.compilation_unit();
                 visitor.VisitCompilation_unit(compilationUnit);
 
-                Console.WriteLine(compilationUnit);
-                Console.WriteLine(tree);
-                Console.WriteLine(parser.compilation_unit());
-                //Console.WriteLine(visitor.Visit(tree));
+                Console.WriteLine("Methods: " + visitor.MethodCount);
+                Console.WriteLine("Virtual Methods: " + visitor.VirtualMethodCount);
+
                 Console.ReadLine();
             }
         }

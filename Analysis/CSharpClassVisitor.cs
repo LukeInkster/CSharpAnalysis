@@ -5,7 +5,7 @@ using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
-    public class CSharpVisitor : CSharpParserBaseVisitor<int>
+    public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
     {
         public int ExtendingClassCount { get; private set; }
         public int ClassCount { get; private set; }

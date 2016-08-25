@@ -26,7 +26,7 @@ namespace CSharpAnalysis
 
                 foreach (var classDef in classDefs)
                 {
-                    var visitor = new CSharpVisitor();
+                    var visitor = new CSharpClassVisitor();
 
                     visitor.VisitClass_definition(classDef);
 

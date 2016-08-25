@@ -88,17 +88,17 @@ namespace CSharpAnalysis
                 .SelectMany(ChildrenOf);
         }
 
-        private static bool IsVirtualModifier(IParseTree child)
+        private static bool IsVirtualModifier(IParseTree tree)
         {
-            return child
+            return tree
                 .GetText()
                 .ToLower()
                 .Equals("virtual");
         }
 
-        private static bool IsOverrideModifier(IParseTree child)
+        private static bool IsOverrideModifier(IParseTree tree)
         {
-            return child
+            return tree
                 .GetText()
                 .ToLower()
                 .Equals("override");

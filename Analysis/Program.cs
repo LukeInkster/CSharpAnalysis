@@ -9,10 +9,13 @@ namespace CSharpAnalysis
     {
         public static void Main(string[] args)
         {
-            const string directory = @"C:\Dev\CSharpCorpus\EntityFramework";
+            const string directory = @"C:\Dev\CSharpCorpusMini\";
+            var projectCount = Directory.EnumerateDirectories(directory).Count();
 
             var analyses = Analyse(CSharpFilesIn(directory));
 
+            Console.WriteLine("Searching in: " + directory);
+            Console.WriteLine("Projects: " + projectCount);
             Console.WriteLine("Files: " + analyses.Count);
             Console.WriteLine("Classes: " + analyses.Sum(a => a.ClassCount));
             Console.WriteLine("Methods: " + analyses.Sum(a => a.MethodCount));
@@ -24,7 +27,7 @@ namespace CSharpAnalysis
 
         private static List<FileAnalysis> Analyse(List<string> files)
         {
-            PrintToOutput(files.Count() + " files");
+            PrintToOutput(files.Count + " files");
             var analyses = new List<FileAnalysis>();
             foreach (var file in files)
             {

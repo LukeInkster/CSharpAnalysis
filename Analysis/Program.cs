@@ -14,37 +14,16 @@ namespace CSharpAnalysis
     {
         public static void Main(string[] args)
         {
-            const string directory = @"C:\Dev\CSharpCorpus\AutoMapper";
+            const string directory = @"C:\Dev\CSharpCorpus\coreclr";
 
             var files = CSharpFilesIn(directory);
 
-            foreach (var file in files)
-            {
-                Analyse(file);
-            }
-        }
+            var analyses = files.Select(file => new FileAnalysis(file)).ToList();
 
-        private static void Analyse(string file)
-        {
-            using (var fileStream = new StreamReader(file))
-            {
-                var inputStream = new AntlrInputStream(fileStream);
-                var lexer = new CSharpLexer(inputStream);
-                var commonTokenStream = new CommonTokenStream(lexer);
-                var parser = new CSharpParser(commonTokenStream);
+            Console.WriteLine("Method Count: " + analyses.Sum(a => a.MethodCount));
+            Console.WriteLine("Virtual Method Count: " + analyses.Sum(a => a.VirtualMethodCount));
 
-                parser.RemoveErrorListeners();
-                parser.AddErrorListener(new BaseErrorListener());
-
-                var visitor = new CSharpVisitor();
-                
-                visitor.VisitCompilation_unit(parser.compilation_unit());
-
-                Console.WriteLine("Methods: " + visitor.MethodCount);
-                Console.WriteLine("Virtual Methods: " + visitor.VirtualMethodCount);
-
-                Console.ReadLine();
-            }
+            Console.ReadLine();
         }
 
         private static IEnumerable<string> CSharpFilesIn(string dir)

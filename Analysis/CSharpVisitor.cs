@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime.Tree;
 
@@ -92,16 +93,14 @@ namespace CSharpAnalysis
         {
             return tree
                 .GetText()
-                .ToLower()
-                .Equals("virtual");
+                .Equals("virtual", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsOverrideModifier(IParseTree tree)
         {
             return tree
                 .GetText()
-                .ToLower()
-                .Equals("override");
+                .Equals("override", StringComparison.OrdinalIgnoreCase);
         }
 
         public static void Print(string s)

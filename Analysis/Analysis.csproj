@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Corpus.cs" />
     <Compile Include="CSharpClassVisitor.cs" />
     <Compile Include="FileAnalysis.cs" />
     <Compile Include="GeneratedFiles\CSharpLexer.cs" />

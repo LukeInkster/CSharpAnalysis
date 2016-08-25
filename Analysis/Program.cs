@@ -10,21 +10,16 @@ namespace CSharpAnalysis
 
         public static void Main(string[] args)
         {
-            var projectDirectories = Directory
-                .EnumerateDirectories(CorpusDirectory);
-
-            var projects = projectDirectories
-                .Select(dir => new Project(dir))
-                .ToList();
+            var corpus = new Corpus(CorpusDirectory);
 
             Console.WriteLine("Searching in: " + CorpusDirectory);
-            Console.WriteLine("Projects: " + projects.Count);
-            Console.WriteLine("Files: " + projects.Sum(p => p.FileCount));
-            Console.WriteLine("Classes: " + projects.Sum(p => p.ClassCount));
-            Console.WriteLine("Extending Classes: " + projects.Sum(p => p.ExtendingClassCount));
-            Console.WriteLine("Methods: " + projects.Sum(p => p.MethodCount));
-            Console.WriteLine("Virtual Methods: " + projects.Sum(p => p.VirtualMethodCount));
-            Console.WriteLine("Override Methods: " + projects.Sum(p => p.OverrideMethodCount));
+            Console.WriteLine("Projects: " + corpus.ProjectCount);
+            Console.WriteLine("Files: " + corpus.FileCount);
+            Console.WriteLine("Classes: " + corpus.ClassCount);
+            Console.WriteLine("Extending Classes: " + corpus.ExtendingClassCount);
+            Console.WriteLine("Methods: " + corpus.MethodCount);
+            Console.WriteLine("Virtual Methods: " + corpus.VirtualMethodCount);
+            Console.WriteLine("Override Methods: " + corpus.OverrideMethodCount);
 
             Console.ReadLine();
         }

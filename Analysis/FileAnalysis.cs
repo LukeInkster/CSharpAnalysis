@@ -6,8 +6,10 @@ namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
+        public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
+        public int OverrideMethodCount { get; private set; }
 
         public FileAnalysis(string file)
         {
@@ -19,8 +21,10 @@ namespace CSharpAnalysis
 
                 visitor.VisitCompilation_unit(CompilationUnitFor(inputStream));
 
+                ClassCount = visitor.ClassCount;
                 MethodCount = visitor.MethodCount;
                 VirtualMethodCount = visitor.VirtualMethodCount;
+                OverrideMethodCount = visitor.OverrideMethodCount;
             }
         }
 

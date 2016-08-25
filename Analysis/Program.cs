@@ -9,12 +9,15 @@ namespace CSharpAnalysis
     {
         public static void Main(string[] args)
         {
-            const string directory = @"C:\Dev\CSharpCorpus";
+            const string directory = @"C:\Dev\CSharpCorpus\EntityFramework";
 
             var analyses = Analyse(CSharpFilesIn(directory));
 
-            Console.WriteLine("Method Count: " + analyses.Sum(a => a.MethodCount));
-            Console.WriteLine("Virtual Method Count: " + analyses.Sum(a => a.VirtualMethodCount));
+            Console.WriteLine("Files: " + analyses.Count);
+            Console.WriteLine("Classes: " + analyses.Sum(a => a.ClassCount));
+            Console.WriteLine("Methods: " + analyses.Sum(a => a.MethodCount));
+            Console.WriteLine("Virtual Methods: " + analyses.Sum(a => a.VirtualMethodCount));
+            Console.WriteLine("Override Methods: " + analyses.Sum(a => a.OverrideMethodCount));
 
             Console.ReadLine();
         }

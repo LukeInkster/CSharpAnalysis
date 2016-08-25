@@ -6,9 +6,16 @@ namespace CSharpAnalysis
 {
     public class CSharpVisitor : CSharpParserBaseVisitor<int>
     {
-        public int MethodCount;
-        public int VirtualMethodCount;
-        public int OverrideMethodCount;
+        public int ClassCount { get; private set; }
+        public int MethodCount { get; private set; }
+        public int VirtualMethodCount { get; private set; }
+        public int OverrideMethodCount { get; private set; }
+
+        public override int VisitClass_body(CSharpParser.Class_bodyContext context)
+        {
+            ClassCount++;
+            return base.VisitClass_body(context);
+        }
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {

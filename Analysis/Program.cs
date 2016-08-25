@@ -18,6 +18,7 @@ namespace CSharpAnalysis
             Console.WriteLine("Projects: " + projectCount);
             Console.WriteLine("Files: " + analyses.Count);
             Console.WriteLine("Classes: " + analyses.Sum(a => a.ClassCount));
+            Console.WriteLine("Extended Classes: " + analyses.Sum(a => a.ExtendedClassCount));
             Console.WriteLine("Methods: " + analyses.Sum(a => a.MethodCount));
             Console.WriteLine("Virtual Methods: " + analyses.Sum(a => a.VirtualMethodCount));
             Console.WriteLine("Override Methods: " + analyses.Sum(a => a.OverrideMethodCount));
@@ -44,7 +45,7 @@ namespace CSharpAnalysis
         {
             return Directory.EnumerateFiles(
                 path: dir,
-                searchPattern: "*.cs", 
+                searchPattern: "*.cs",
                 searchOption: SearchOption.AllDirectories)
                 .ToList();
         }

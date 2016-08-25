@@ -7,10 +7,27 @@ namespace CSharpAnalysis
 {
     public class CSharpVisitor : CSharpParserBaseVisitor<int>
     {
+        public int ExtendingClassCount { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
         public int OverrideMethodCount { get; private set; }
+
+        public override int VisitClass_definition(CSharpParser.Class_definitionContext context)
+        {
+            if (ClassHasSuperClass(context))
+            {
+                ExtendingClassCount++;
+            }
+            return base.VisitClass_definition(context);
+        }
+
+        private static bool ClassHasSuperClass(CSharpParser.Class_definitionContext context)
+        {
+            return context
+                .children
+                .Any(child => child is CSharpParser.Class_baseContext);
+        }
 
         public override int VisitClass_body(CSharpParser.Class_bodyContext context)
         {

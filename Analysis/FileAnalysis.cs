@@ -9,11 +9,11 @@ namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
-        public int ExtendingClassCount { get; private set; }
-        public int ClassCount { get; private set; }
-        public int MethodCount { get; private set; }
-        public int VirtualMethodCount { get; private set; }
-        public int OverrideMethodCount { get; private set; }
+        public int ExtendingClassCount { get; }
+        public int ClassCount { get; }
+        public int MethodCount { get; }
+        public int VirtualMethodCount { get; }
+        public int OverrideMethodCount { get; }
 
         public FileAnalysis(string file)
         {

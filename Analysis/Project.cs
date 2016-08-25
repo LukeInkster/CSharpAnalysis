@@ -9,7 +9,7 @@ namespace CSharpAnalysis
 {
     public class Project
     {
-        private List<FileAnalysis> _analyses;
+        private readonly List<FileAnalysis> _analyses;
 
         public int FileCount => _analyses.Count;
         public int ClassCount => _analyses.Sum(a => a.ClassCount);
@@ -25,7 +25,9 @@ namespace CSharpAnalysis
 
         private static List<FileAnalysis> Analyse(List<string> files)
         {
-            return files.Select(file => new FileAnalysis(file)).ToList();
+            return files
+                .Select(file => new FileAnalysis(file))
+                .ToList();
         }
 
         private static List<string> CSharpFilesIn(string dir)

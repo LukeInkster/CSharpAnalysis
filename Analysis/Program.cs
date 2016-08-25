@@ -6,18 +6,18 @@ namespace CSharpAnalysis
 {
     public class Program
     {
+        private const string CorpusDirectory = @"C:\Dev\CSharpCorpusMini\";
+
         public static void Main(string[] args)
         {
-            const string corpusDirectory = @"C:\Dev\CSharpCorpusMini\";
-
             var projectDirectories = Directory
-                .EnumerateDirectories(corpusDirectory);
+                .EnumerateDirectories(CorpusDirectory);
 
             var projects = projectDirectories
                 .Select(dir => new Project(dir))
                 .ToList();
 
-            Console.WriteLine("Searching in: " + corpusDirectory);
+            Console.WriteLine("Searching in: " + CorpusDirectory);
             Console.WriteLine("Projects: " + projects.Count);
             Console.WriteLine("Files: " + projects.Sum(p => p.FileCount));
             Console.WriteLine("Classes: " + projects.Sum(p => p.ClassCount));

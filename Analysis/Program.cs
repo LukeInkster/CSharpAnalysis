@@ -14,11 +14,9 @@ namespace CSharpAnalysis
     {
         public static void Main(string[] args)
         {
-            const string directory = @"C:\Dev\CSharpCorpus\coreclr";
+            const string directory = @"C:\Dev\CSharpCorpus";
 
-            var files = CSharpFilesIn(directory);
-
-            var analyses = files.Select(file => new FileAnalysis(file)).ToList();
+            var analyses = Analyse(CSharpFilesIn(directory));
 
             Console.WriteLine("Method Count: " + analyses.Sum(a => a.MethodCount));
             Console.WriteLine("Virtual Method Count: " + analyses.Sum(a => a.VirtualMethodCount));
@@ -26,9 +24,33 @@ namespace CSharpAnalysis
             Console.ReadLine();
         }
 
-        private static IEnumerable<string> CSharpFilesIn(string dir)
+        private static List<FileAnalysis> Analyse(List<string> files)
         {
-            return Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories);
+            PrintToOutput(files.Count() + " files");
+            var analyses = new List<FileAnalysis>();
+            foreach (var file in files)
+            {
+                analyses.Add(new FileAnalysis(file));
+                if (analyses.Count%1000 == 0)
+                {
+                    PrintToOutput(analyses.Count + "Files analysed");
+                }
+            }
+            return analyses;
+        }
+
+        private static List<string> CSharpFilesIn(string dir)
+        {
+            return Directory.EnumerateFiles(
+                path: dir,
+                searchPattern: "*.cs", 
+                searchOption: SearchOption.AllDirectories)
+                .ToList();
+        }
+
+        public static void PrintToOutput(string s)
+        {
+            System.Diagnostics.Debug.Write("\n" + s);
         }
     }
 }

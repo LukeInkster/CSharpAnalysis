@@ -1,10 +1,5 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Antlr4.Runtime;
 
 namespace CSharpAnalysis
@@ -22,14 +17,14 @@ namespace CSharpAnalysis
 
                 var visitor = new CSharpVisitor();
 
-                visitor.VisitCompilation_unit(CompilationUnit(inputStream));
+                visitor.VisitCompilation_unit(CompilationUnitFor(inputStream));
 
                 MethodCount = visitor.MethodCount;
                 VirtualMethodCount = visitor.VirtualMethodCount;
             }
         }
 
-        private CSharpParser.Compilation_unitContext CompilationUnit(AntlrInputStream inputStream)
+        private CSharpParser.Compilation_unitContext CompilationUnitFor(ICharStream inputStream)
         {
             var codeTokens = new List<IToken>();
             var commentTokens = new List<IToken>();
@@ -41,7 +36,7 @@ namespace CSharpAnalysis
             var directiveTokenSource = new ListTokenSource(directiveTokens);
             var directiveTokenStream = new CommonTokenStream(directiveTokenSource, CSharpLexer.DIRECTIVE);
             var preprocessorParser = new CSharpPreprocessorParser(directiveTokenStream);
-
+            preprocessorParser.RemoveErrorListeners();
             var index = 0;
             var compiliedTokens = true;
             while (index < tokens.Count)

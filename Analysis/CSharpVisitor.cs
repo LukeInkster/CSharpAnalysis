@@ -12,15 +12,20 @@ namespace CSharpAnalysis
     {
         public int MethodCount = 0;
         public int VirtualMethodCount = 0;
+        public int OverrideMethodCount = 0;
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {
-            if (DeclarationIsMethod(context))
+            if (MemberDeclarationIsMethod(context))
             {
                 MethodCount++;
                 if (MethodDeclarationIsVirtual(context))
                 {
                     VirtualMethodCount++;
+                }
+                if (MethodDeclarationIsOverride(context))
+                {
+                    OverrideMethodCount++;
                 }
             }
             return base.VisitClass_member_declaration(context);
@@ -28,22 +33,30 @@ namespace CSharpAnalysis
 
         private static bool MethodDeclarationIsVirtual(CSharpParser.Class_member_declarationContext context)
         {
-            var result = context
-                .children
-                .OfType<CSharpParser.All_member_modifiersContext>()
-                .SelectMany(ChildrenOf)
+            return ModifiersOf(context)
                 .Any(IsVirtualModifier);
-            
-            if (result == false && context.GetText().Contains("virtual"))
-            {
-                Print("hi");
-            }
-
-            return result;
         }
 
-        private static bool DeclarationIsMethod(CSharpParser.Class_member_declarationContext context)
+        private static bool MethodDeclarationIsOverride(CSharpParser.Class_member_declarationContext context)
         {
+            return ModifiersOf(context)
+                .Any(IsOverrideModifier);
+        }
+
+        private static IEnumerable<IParseTree> ModifiersOf(CSharpParser.Class_member_declarationContext context)
+        {
+            return context
+                .children
+                .OfType<CSharpParser.All_member_modifiersContext>()
+                .SelectMany(ChildrenOf);
+        }
+
+        private static bool MemberDeclarationIsMethod(CSharpParser.Class_member_declarationContext context)
+        {
+            // Void methods:
+            // -  a grandchild node is a Method_declarationContext
+            // Non-void methods:
+            // -  a grandchild node is Typed_member_declarationContext which has a Method_declarationContext child
             return GrandChildrenOf(context)
                 .Any(grandChild =>
                     IsMethodDeclarationTree(grandChild) ||
@@ -78,6 +91,14 @@ namespace CSharpAnalysis
                 .GetText()
                 .ToLower()
                 .Equals("virtual");
+        }
+
+        private static bool IsOverrideModifier(IParseTree child)
+        {
+            return child
+                .GetText()
+                .ToLower()
+                .Equals("override");
         }
 
         public static void Print(string s)

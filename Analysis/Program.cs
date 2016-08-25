@@ -9,50 +9,25 @@ namespace CSharpAnalysis
     {
         public static void Main(string[] args)
         {
-            const string directory = @"C:\Dev\CSharpCorpusMini\";
-            var projectCount = Directory.EnumerateDirectories(directory).Count();
+            const string corpusDirectory = @"C:\Dev\CSharpCorpusMini\";
 
-            var analyses = Analyse(CSharpFilesIn(directory));
+            var projectDirectories = Directory
+                .EnumerateDirectories(corpusDirectory);
 
-            Console.WriteLine("Searching in: " + directory);
-            Console.WriteLine("Projects: " + projectCount);
-            Console.WriteLine("Files: " + analyses.Count);
-            Console.WriteLine("Classes: " + analyses.Sum(a => a.ClassCount));
-            Console.WriteLine("Extended Classes: " + analyses.Sum(a => a.ExtendedClassCount));
-            Console.WriteLine("Methods: " + analyses.Sum(a => a.MethodCount));
-            Console.WriteLine("Virtual Methods: " + analyses.Sum(a => a.VirtualMethodCount));
-            Console.WriteLine("Override Methods: " + analyses.Sum(a => a.OverrideMethodCount));
+            var projects = projectDirectories
+                .Select(dir => new Project(dir))
+                .ToList();
+
+            Console.WriteLine("Searching in: " + corpusDirectory);
+            Console.WriteLine("Projects: " + projects.Count);
+            Console.WriteLine("Files: " + projects.Sum(p => p.FileCount));
+            Console.WriteLine("Classes: " + projects.Sum(p => p.ClassCount));
+            Console.WriteLine("Extended Classes: " + projects.Sum(p => p.ExtendingClassCount));
+            Console.WriteLine("Methods: " + projects.Sum(p => p.MethodCount));
+            Console.WriteLine("Virtual Methods: " + projects.Sum(p => p.VirtualMethodCount));
+            Console.WriteLine("Override Methods: " + projects.Sum(p => p.OverrideMethodCount));
 
             Console.ReadLine();
-        }
-
-        private static List<FileAnalysis> Analyse(List<string> files)
-        {
-            PrintToOutput(files.Count + " files");
-            var analyses = new List<FileAnalysis>();
-            foreach (var file in files)
-            {
-                analyses.Add(new FileAnalysis(file));
-                if (analyses.Count%1000 == 0)
-                {
-                    PrintToOutput(analyses.Count + "Files analysed");
-                }
-            }
-            return analyses;
-        }
-
-        private static List<string> CSharpFilesIn(string dir)
-        {
-            return Directory.EnumerateFiles(
-                path: dir,
-                searchPattern: "*.cs",
-                searchOption: SearchOption.AllDirectories)
-                .ToList();
-        }
-
-        public static void PrintToOutput(string s)
-        {
-            System.Diagnostics.Debug.Write("\n" + s);
         }
     }
 }

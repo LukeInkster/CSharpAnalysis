@@ -73,10 +73,6 @@ namespace CSharpAnalysis
                     compiliedTokens = directive.value;
                     index = directiveTokenIndex - 1;
                 }
-                else if (false)
-                {
-                    commentTokens.Add(token); // Colect comment tokens (if required).
-                }
                 else if (token.Channel != Lexer.Hidden && token.Type != CSharpLexer.DIRECTIVE_NEW_LINE && compiliedTokens)
                 {
                     codeTokens.Add(token); // Collect code tokens.

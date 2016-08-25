@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
     public class CSharpVisitor : CSharpParserBaseVisitor<int>
     {
-        public int MethodCount = 0;
-        public int VirtualMethodCount = 0;
-        public int OverrideMethodCount = 0;
+        public int MethodCount;
+        public int VirtualMethodCount;
+        public int OverrideMethodCount;
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {

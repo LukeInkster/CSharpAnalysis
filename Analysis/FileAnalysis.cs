@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
@@ -19,12 +18,13 @@ namespace CSharpAnalysis
         {
             using (var fileStream = new StreamReader(file))
             {
-                var inputStream = new AntlrInputStream(fileStream);
-
-                var classDefs = FindClassDefinitionsIn(CompilationUnitFor(inputStream));
+                var classDefs = ClassDefinitionsIn(CompilationUnitFor(fileStream));
 
                 foreach (var classDef in classDefs)
                 {
+                    // Visitors need to stay local scoped. It appears they keep a reference to the
+                    // trees they visit, so if we keep a reference to the visitor then we also
+                    // keep a transitive reference to the tree which prevents garbage collection
                     var visitor = new CSharpClassVisitor();
 
                     visitor.VisitClass_definition(classDef);
@@ -35,21 +35,22 @@ namespace CSharpAnalysis
                     VirtualMethodCount += visitor.VirtualMethodCount;
                     OverrideMethodCount += visitor.OverrideMethodCount;
                 }
-                
             }
         }
 
-        private static IEnumerable<CSharpParser.Class_definitionContext> FindClassDefinitionsIn(IParseTree tree)
+        private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
         {
             var children = ChildrenOf(tree).ToList();
 
             return children
                 .OfType<CSharpParser.Class_definitionContext>()
-                .Concat(children.SelectMany(FindClassDefinitionsIn));
+                .Concat(children.SelectMany(ClassDefinitionsIn));
         }
 
-        private CSharpParser.Compilation_unitContext CompilationUnitFor(ICharStream inputStream)
+        private static CSharpParser.Compilation_unitContext CompilationUnitFor(TextReader streamReader)
         {
+            var inputStream = new AntlrInputStream(streamReader);
+
             var codeTokens = new List<IToken>();
             var commentTokens = new List<IToken>();
 

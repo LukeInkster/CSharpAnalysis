@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
-        public int ExtendedClassCount { get; private set; }
+        public int ExtendingClassCount { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
@@ -18,15 +21,37 @@ namespace CSharpAnalysis
             {
                 var inputStream = new AntlrInputStream(fileStream);
 
-                var visitor = new CSharpVisitor();
 
-                visitor.VisitCompilation_unit(CompilationUnitFor(inputStream));
+                var classDefs = FindClassDefinitionsIn(CompilationUnitFor(inputStream));
 
-                ClassCount = visitor.ClassCount;
-                ExtendedClassCount = visitor.ExtendingClassCount;
-                MethodCount = visitor.MethodCount;
-                VirtualMethodCount = visitor.VirtualMethodCount;
-                OverrideMethodCount = visitor.OverrideMethodCount;
+                foreach (var classDef in classDefs)
+                {
+                    var visitor = new CSharpVisitor();
+
+                    visitor.VisitClass_definition(classDef);
+
+                    ClassCount += visitor.ClassCount;
+                    ExtendingClassCount += visitor.ExtendingClassCount;
+                    MethodCount += visitor.MethodCount;
+                    VirtualMethodCount += visitor.VirtualMethodCount;
+                    OverrideMethodCount += visitor.OverrideMethodCount;
+                }
+                
+            }
+        }
+
+        private static IEnumerable<CSharpParser.Class_definitionContext> FindClassDefinitionsIn(IParseTree parseTree)
+        {
+            foreach (var child in ChildrenOf(parseTree))
+            {
+                if (child is CSharpParser.Class_definitionContext)
+                {
+                    yield return child as CSharpParser.Class_definitionContext;
+                }
+                foreach (var classDefinition in FindClassDefinitionsIn(child))
+                {
+                    yield return classDefinition;
+                }
             }
         }
 
@@ -92,6 +117,13 @@ namespace CSharpAnalysis
             var parser = new CSharpParser(codeTokenStream);
             // Parse syntax tree (CSharpParser.g4)
             return parser.compilation_unit();
+        }
+
+        private static IEnumerable<IParseTree> ChildrenOf(IParseTree tree)
+        {
+            return Enumerable
+                .Range(0, tree.ChildCount)
+                .Select(tree.GetChild);
         }
     }
 }

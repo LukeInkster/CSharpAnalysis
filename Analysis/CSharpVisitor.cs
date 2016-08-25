@@ -13,8 +13,17 @@ namespace CSharpAnalysis
         public int VirtualMethodCount { get; private set; }
         public int OverrideMethodCount { get; private set; }
 
+        private bool _alreadyInClass;
+
         public override int VisitClass_definition(CSharpParser.Class_definitionContext context)
         {
+            if (_alreadyInClass)
+            {
+                // each class has its own visitor, so if we find one when we're already in
+                // a class then we leave it to the other visitor that will be created
+                return 0;
+            }
+            _alreadyInClass = true;
             if (ClassHasSuperClass(context))
             {
                 ExtendingClassCount++;

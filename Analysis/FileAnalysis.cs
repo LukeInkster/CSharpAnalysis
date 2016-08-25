@@ -21,7 +21,6 @@ namespace CSharpAnalysis
             {
                 var inputStream = new AntlrInputStream(fileStream);
 
-
                 var classDefs = FindClassDefinitionsIn(CompilationUnitFor(inputStream));
 
                 foreach (var classDef in classDefs)
@@ -40,19 +39,13 @@ namespace CSharpAnalysis
             }
         }
 
-        private static IEnumerable<CSharpParser.Class_definitionContext> FindClassDefinitionsIn(IParseTree parseTree)
+        private static IEnumerable<CSharpParser.Class_definitionContext> FindClassDefinitionsIn(IParseTree tree)
         {
-            foreach (var child in ChildrenOf(parseTree))
-            {
-                if (child is CSharpParser.Class_definitionContext)
-                {
-                    yield return child as CSharpParser.Class_definitionContext;
-                }
-                foreach (var classDefinition in FindClassDefinitionsIn(child))
-                {
-                    yield return classDefinition;
-                }
-            }
+            var children = ChildrenOf(tree).ToList();
+
+            return children
+                .OfType<CSharpParser.Class_definitionContext>()
+                .Concat(children.SelectMany(FindClassDefinitionsIn));
         }
 
         private CSharpParser.Compilation_unitContext CompilationUnitFor(ICharStream inputStream)

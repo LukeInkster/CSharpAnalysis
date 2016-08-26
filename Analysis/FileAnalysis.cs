@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
@@ -8,34 +9,25 @@ namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
-        public int ExtendingClassCount { get; }
-        public int ClassCount { get; }
-        public int MethodCount { get; }
-        public int VirtualMethodCount { get; }
-        public int OverrideMethodCount { get; }
+        private readonly IEnumerable<ClassAnalysis> _classAnalyses;
+        public int ClassCount => _classAnalyses.Sum(c => c.ClassCount);
+        public int ExtendingClassCount => _classAnalyses.Sum(c => c.ExtendingClassCount);
+        public int MethodCount => _classAnalyses.Sum(c => c.MethodCount);
+        public int VirtualMethodCount => _classAnalyses.Sum(c => c.VirtualMethodCount);
+        public int OverrideMethodCount => _classAnalyses.Sum(c => c.OverrideMethodCount);
 
         public FileAnalysis(string file)
         {
             using (var fileStream = new StreamReader(file))
             {
-                var classDefs = ClassDefinitionsIn(CompilationUnitFor(fileStream));
-
-                foreach (var classDef in classDefs)
-                {
-                    // Visitors need to stay local scoped. It appears they keep a reference to the
-                    // trees they visit, so if we keep a reference to the visitor then we also
-                    // keep a transitive reference to the tree which prevents garbage collection
-                    var visitor = new CSharpClassVisitor();
-
-                    visitor.VisitClass_definition(classDef);
-
-                    ClassCount += visitor.ClassCount;
-                    ExtendingClassCount += visitor.ExtendingClassCount;
-                    MethodCount += visitor.MethodCount;
-                    VirtualMethodCount += visitor.VirtualMethodCount;
-                    OverrideMethodCount += visitor.OverrideMethodCount;
-                }
+                _classAnalyses = Analyse(ClassDefinitionsIn(CompilationUnitOf(fileStream)));
             }
+        }
+
+        private static IEnumerable<ClassAnalysis> Analyse(IEnumerable<CSharpParser.Class_definitionContext> classDefinitions)
+        {
+            return classDefinitions
+                .Select(classDef => new ClassAnalysis(classDef));
         }
 
         private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
@@ -47,7 +39,7 @@ namespace CSharpAnalysis
                 .Concat(children.SelectMany(ClassDefinitionsIn));
         }
 
-        private static CSharpParser.Compilation_unitContext CompilationUnitFor(TextReader streamReader)
+        private static CSharpParser.Compilation_unitContext CompilationUnitOf(TextReader streamReader)
         {
             var inputStream = new AntlrInputStream(streamReader);
 

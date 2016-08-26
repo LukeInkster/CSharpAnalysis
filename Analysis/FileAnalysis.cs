@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
@@ -11,7 +10,7 @@ namespace CSharpAnalysis
     {
         private readonly IEnumerable<ClassAnalysis> _classAnalyses;
         public int ClassCount => _classAnalyses.Sum(c => c.ClassCount);
-        public int ExtendingClassCount => _classAnalyses.Sum(c => c.ExtendingClassCount);
+        public int ExtendingClassCount => _classAnalyses.Count(c => c.ClassIsExtending);
         public int MethodCount => _classAnalyses.Sum(c => c.MethodCount);
         public int VirtualMethodCount => _classAnalyses.Sum(c => c.VirtualMethodCount);
         public int OverrideMethodCount => _classAnalyses.Sum(c => c.OverrideMethodCount);

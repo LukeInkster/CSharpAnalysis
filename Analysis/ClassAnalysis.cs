@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CSharpAnalysis
+﻿namespace CSharpAnalysis
 {
     public class ClassAnalysis
     {
-        public int ExtendingClassCount { get; }
+        public bool ClassIsExtending { get; }
         public int ClassCount { get; }
         public int MethodCount { get; }
         public int VirtualMethodCount { get; }
@@ -24,7 +18,7 @@ namespace CSharpAnalysis
             visitor.VisitClass_definition(classDef);
 
             ClassCount = visitor.ClassCount;
-            ExtendingClassCount = visitor.ExtendingClassCount;
+            ClassIsExtending = visitor.ClassIsExtending;
             MethodCount = visitor.MethodCount;
             VirtualMethodCount = visitor.VirtualMethodCount;
             OverrideMethodCount = visitor.OverrideMethodCount;

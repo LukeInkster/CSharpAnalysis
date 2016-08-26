@@ -7,7 +7,7 @@ namespace CSharpAnalysis
 {
     public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
     {
-        public int ExtendingClassCount { get; private set; }
+        public bool ClassIsExtending { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
@@ -26,7 +26,7 @@ namespace CSharpAnalysis
             _alreadyInClass = true;
             if (ClassHasSuperClass(context))
             {
-                ExtendingClassCount++;
+                ClassIsExtending = true;
             }
             return base.VisitClass_definition(context);
         }

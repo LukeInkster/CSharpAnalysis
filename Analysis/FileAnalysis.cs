@@ -8,20 +8,18 @@ namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
-        private readonly List<ClassAnalysis> _classAnalyses;
-        public int ClassCount => _classAnalyses.Sum(c => c.ClassCount);
-        public int ExtendingClassCount => _classAnalyses.Count(c => c.ClassIsExtending);
-        public int MethodCount => _classAnalyses.Sum(c => c.MethodCount);
-        public int VirtualMethodCount => _classAnalyses.Sum(c => c.VirtualMethodCount);
-        public int OverrideMethodCount => _classAnalyses.Sum(c => c.OverrideMethodCount);
-        public int ClassesWithVirtualDowncallsInConstructorsCount
-            => _classAnalyses.Count(c => c.ContainsVirtualDowncallInConstructor);
+        public readonly List<ClassAnalysis> ClassAnalyses;
+        public int ClassCount => ClassAnalyses.Sum(c => c.ClassCount);
+        public int ExtendingClassCount => ClassAnalyses.Count(c => c.ClassIsExtending);
+        public int MethodCount => ClassAnalyses.Sum(c => c.MethodCount);
+        public int VirtualMethodCount => ClassAnalyses.Sum(c => c.VirtualMethodCount);
+        public int OverrideMethodCount => ClassAnalyses.Sum(c => c.OverrideMethodCount);
 
         public FileAnalysis(string file)
         {
             using (var fileStream = new StreamReader(file))
             {
-                _classAnalyses = Analyse(ClassDefinitionsIn(CompilationUnitOf(fileStream)));
+                ClassAnalyses = Analyse(ClassDefinitionsIn(CompilationUnitOf(fileStream)));
             }
         }
 

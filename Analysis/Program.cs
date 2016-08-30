@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace CSharpAnalysis
 {
@@ -19,8 +20,10 @@ namespace CSharpAnalysis
             Console.WriteLine("Methods: " + corpus.MethodCount);
             Console.WriteLine("Virtual Methods: " + corpus.VirtualMethodCount);
             Console.WriteLine("Override Methods: " + corpus.OverrideMethodCount);
-            Console.WriteLine("Classes with virtual downcalls in constructors: "
+            Console.WriteLine("Classes with calls to local virtual methods in constructors: "
                 + corpus.ClassesWithVirtualDowncallsInConstructorsCount);
+            Console.WriteLine("Classes with calls to local override methods in constructors: "
+                + corpus.ClassesWithOverrideDowncallsInConstructorsCount);
 
             Console.ReadLine();
         }

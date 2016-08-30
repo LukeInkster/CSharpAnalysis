@@ -8,11 +8,12 @@ namespace CSharpAnalysis
     public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
     {
         public bool ClassIsExtending { get; private set; }
-        public bool ContainsVirtualDowncallInConstructor { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
         public int OverrideMethodCount { get; private set; }
+        public bool ContainsVirtualDowncallInConstructor { get; private set; }
+        public bool ContainsOverrideDowncallInConstructor { get; private set; }
 
         private bool _alreadyInClass;
         private bool _inConstructor;
@@ -40,6 +41,10 @@ namespace CSharpAnalysis
                 if (methodDetails != null && methodDetails.IsVirtual)
                 {
                     ContainsVirtualDowncallInConstructor = true;
+                }
+                if (methodDetails != null && methodDetails.IsOverride)
+                {
+                    ContainsOverrideDowncallInConstructor = true;
                 }
             }
             return base.VisitPrimary_expression(context);

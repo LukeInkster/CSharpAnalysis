@@ -7,8 +7,10 @@
         public int MethodCount { get; }
         public int VirtualMethodCount { get; }
         public int OverrideMethodCount { get; }
-        public bool ContainsVirtualDowncallInConstructor { get; }
-        public bool ContainsOverrideDowncallInConstructor { get; }
+        public bool ContainsLocalVirtualCallInConstructor { get; }
+        public bool ContainsLocalOverrideCallInConstructor { get; }
+        public bool ContainsLocalMethodCallInConstructor { get; }
+        public bool ContainsUntracedMethodCallInConstructor { get; }
 
         public ClassAnalysis(CSharpParser.Class_definitionContext classDef)
         {
@@ -27,8 +29,10 @@
             MethodCount = visitor.MethodCount;
             VirtualMethodCount = visitor.VirtualMethodCount;
             OverrideMethodCount = visitor.OverrideMethodCount;
-            ContainsVirtualDowncallInConstructor = visitor.ContainsVirtualDowncallInConstructor;
-            ContainsOverrideDowncallInConstructor = visitor.ContainsOverrideDowncallInConstructor;
+            ContainsLocalMethodCallInConstructor = visitor.ContainsLocalMethodCallInConstructor;
+            ContainsLocalVirtualCallInConstructor = visitor.ContainsLocalVirtualCallInConstructor;
+            ContainsLocalOverrideCallInConstructor = visitor.ContainsLocalOverrideCallInConstructor;
+            ContainsUntracedMethodCallInConstructor = visitor.ContainsUntracedMethodCallInConstructor;
         }
     }
 }

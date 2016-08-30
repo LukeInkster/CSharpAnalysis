@@ -19,9 +19,13 @@ namespace CSharpAnalysis
         public int VirtualMethodCount => AllClassAnalyses.Sum(c => c.VirtualMethodCount);
         public int OverrideMethodCount => AllClassAnalyses.Sum(c => c.OverrideMethodCount);
         public int ClassesWithVirtualDowncallsInConstructorsCount
-            => AllClassAnalyses.Count(c => c.ContainsVirtualDowncallInConstructor);
+            => AllClassAnalyses.Count(c => c.ContainsLocalVirtualCallInConstructor);
         public int ClassesWithOverrideDowncallsInConstructorsCount
-            => AllClassAnalyses.Count(c => c.ContainsOverrideDowncallInConstructor);
+            => AllClassAnalyses.Count(c => c.ContainsLocalOverrideCallInConstructor);
+        public int ClassesWithLocalMethodCallsInConstructosCount
+            => AllClassAnalyses.Count(c => c.ContainsLocalMethodCallInConstructor);
+        public int ClassesWithUntracedCallsInConstructorsCount
+            => AllClassAnalyses.Count(c => c.ContainsUntracedMethodCallInConstructor);
 
         public Corpus(string directory)
         {

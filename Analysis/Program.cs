@@ -20,10 +20,14 @@ namespace CSharpAnalysis
             Console.WriteLine("Methods: " + corpus.MethodCount);
             Console.WriteLine("Virtual Methods: " + corpus.VirtualMethodCount);
             Console.WriteLine("Override Methods: " + corpus.OverrideMethodCount);
+            Console.WriteLine("Classes with calls to local methods in constructors: "
+                + corpus.ClassesWithLocalMethodCallsInConstructosCount);
             Console.WriteLine("Classes with calls to local virtual methods in constructors: "
                 + corpus.ClassesWithVirtualDowncallsInConstructorsCount);
             Console.WriteLine("Classes with calls to local override methods in constructors: "
                 + corpus.ClassesWithOverrideDowncallsInConstructorsCount);
+            Console.WriteLine("Classes with calls to methods that couldn't be found in constructors: "
+                + corpus.ClassesWithUntracedCallsInConstructorsCount);
 
             Console.ReadLine();
         }

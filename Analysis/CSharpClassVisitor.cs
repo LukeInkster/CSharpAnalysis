@@ -12,8 +12,10 @@ namespace CSharpAnalysis
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
         public int OverrideMethodCount { get; private set; }
-        public bool ContainsVirtualDowncallInConstructor { get; private set; }
-        public bool ContainsOverrideDowncallInConstructor { get; private set; }
+        public bool ContainsLocalVirtualCallInConstructor { get; private set; }
+        public bool ContainsLocalOverrideCallInConstructor { get; private set; }
+        public bool ContainsLocalMethodCallInConstructor { get; private set; }
+        public bool ContainsUntracedMethodCallInConstructor { get; private set; }
 
         private bool _alreadyInClass;
         private bool _inConstructor;
@@ -38,13 +40,22 @@ namespace CSharpAnalysis
             {
                 var methodName = GetLocalMethodCallName(context);
                 var methodDetails = _methodFinder[methodName];
-                if (methodDetails != null && methodDetails.IsVirtual)
+
+                ContainsLocalMethodCallInConstructor = true;
+                if (methodDetails == null)
                 {
-                    ContainsVirtualDowncallInConstructor = true;
+                    ContainsUntracedMethodCallInConstructor = true;
                 }
-                if (methodDetails != null && methodDetails.IsOverride)
+                else
                 {
-                    ContainsOverrideDowncallInConstructor = true;
+                    if (methodDetails.IsVirtual)
+                    {
+                        ContainsLocalVirtualCallInConstructor = true;
+                    }
+                    if (methodDetails.IsOverride)
+                    {
+                        ContainsLocalOverrideCallInConstructor = true;
+                    }
                 }
             }
             return base.VisitPrimary_expression(context);

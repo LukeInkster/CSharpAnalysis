@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
@@ -27,7 +28,22 @@ namespace CSharpAnalysis
             return base.VisitClass_member_declaration(context);
         }
 
-        private static string MethodName(CSharpParser.Class_member_declarationContext context)
+        public override int VisitStruct_member_declaration(CSharpParser.Struct_member_declarationContext context)
+        {
+            if (!MemberDeclarationIsMethod(context)) return base.VisitStruct_member_declaration(context);
+
+            var methodDetails = new MethodDetails
+            {
+                IsVirtual = MethodDeclarationIsVirtual(context),
+                IsOverride = MethodDeclarationIsOverride(context)
+            };
+
+            AllMethodDetails[MethodName(context)] = methodDetails;
+
+            return base.VisitStruct_member_declaration(context);
+        }
+
+        private static string MethodName(IParseTree context)
         {
             var grandChildren = GrandChildrenOf(context).ToList();
 
@@ -48,19 +64,19 @@ namespace CSharpAnalysis
             return methodMemberNameContext == null ? string.Empty : methodMemberNameContext.GetText();
         }
 
-        private static bool MethodDeclarationIsVirtual(CSharpParser.Class_member_declarationContext context)
+        private static bool MethodDeclarationIsVirtual(ParserRuleContext context)
         {
             return ModifiersOf(context)
                 .Any(IsVirtualModifier);
         }
 
-        private static bool MethodDeclarationIsOverride(CSharpParser.Class_member_declarationContext context)
+        private static bool MethodDeclarationIsOverride(ParserRuleContext context)
         {
             return ModifiersOf(context)
                 .Any(IsOverrideModifier);
         }
 
-        private static IEnumerable<IParseTree> ModifiersOf(CSharpParser.Class_member_declarationContext context)
+        private static IEnumerable<IParseTree> ModifiersOf(ParserRuleContext context)
         {
             return context
                 .children
@@ -68,7 +84,7 @@ namespace CSharpAnalysis
                 .SelectMany(ChildrenOf);
         }
 
-        private static bool MemberDeclarationIsMethod(CSharpParser.Class_member_declarationContext context)
+        private static bool MemberDeclarationIsMethod(IParseTree context)
         {
             // Void methods:
             // -  a grandchild node is a Method_declarationContext

@@ -8,6 +8,7 @@ namespace CSharpAnalysis
     public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
     {
         public bool ClassIsExtending { get; private set; }
+        public bool ContainsVirtualDowncallInConstructor { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
@@ -15,11 +16,10 @@ namespace CSharpAnalysis
 
         private bool _alreadyInClass;
         private bool _inConstructor;
-        private MethodFinder _methodFinder;
+        private readonly MethodFinder _methodFinder;
 
         public CSharpClassVisitor(MethodFinder methodFinder)
         {
-            Console.WriteLine("Hi");
             _methodFinder = methodFinder;
         }
 
@@ -33,13 +33,39 @@ namespace CSharpAnalysis
 
         public override int VisitPrimary_expression(CSharpParser.Primary_expressionContext context)
         {
-            //Print(context.GetText());
             if (_inConstructor && IsLocalMethodCall(context))
             {
-                Print("Found a downcall in a constructor!");
-                Print(context.GetText());
+                var methodName = GetLocalMethodCallName(context);
+                if (_methodFinder[methodName].IsVirtual)
+                {
+                    ContainsVirtualDowncallInConstructor = true;
+                }
             }
             return base.VisitPrimary_expression(context);
+        }
+
+        private static string GetLocalMethodCallName(CSharpParser.Primary_expressionContext context)
+        {
+            var name = context
+                .children
+                .FirstOrDefault(child => child is CSharpParser.SimpleNameExpressionContext)
+                ?.GetText();
+
+            if (name != null)
+            {
+                return name;
+            }
+
+            var memberAccess = context
+                .children
+                .FirstOrDefault(child => child is CSharpParser.Member_accessContext)
+                as CSharpParser.Member_accessContext;
+
+            return memberAccess
+                ?.children
+                ?.FirstOrDefault(child => child is CSharpParser.IdentifierContext)
+                ?.GetText()
+                ?? string.Empty;
         }
 
         private static bool IsLocalMethodCall(CSharpParser.Primary_expressionContext context)

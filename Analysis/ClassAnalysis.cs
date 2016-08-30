@@ -7,6 +7,7 @@
         public int MethodCount { get; }
         public int VirtualMethodCount { get; }
         public int OverrideMethodCount { get; }
+        public bool ContainsVirtualDowncallInConstructor { get; }
 
         public ClassAnalysis(CSharpParser.Class_definitionContext classDef)
         {
@@ -20,6 +21,7 @@
 
             visitor.VisitClass_definition(classDef);
 
+            ContainsVirtualDowncallInConstructor = visitor.ContainsVirtualDowncallInConstructor;
             ClassCount = visitor.ClassCount;
             ClassIsExtending = visitor.ClassIsExtending;
             MethodCount = visitor.MethodCount;

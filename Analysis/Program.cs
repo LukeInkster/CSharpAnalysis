@@ -5,6 +5,7 @@ namespace CSharpAnalysis
     public class Program
     {
         private const string CorpusDirectory = @"C:\Dev\test\";
+        //private const string CorpusDirectory = @"C:\Dev\CSharpCorpusMini\";
 
         public static void Main(string[] args)
         {
@@ -18,6 +19,8 @@ namespace CSharpAnalysis
             Console.WriteLine("Methods: " + corpus.MethodCount);
             Console.WriteLine("Virtual Methods: " + corpus.VirtualMethodCount);
             Console.WriteLine("Override Methods: " + corpus.OverrideMethodCount);
+            Console.WriteLine("Classes with virtual downcalls in constructors: "
+                + corpus.ClassesWithVirtualDowncallsInConstructorsCount);
 
             Console.ReadLine();
         }

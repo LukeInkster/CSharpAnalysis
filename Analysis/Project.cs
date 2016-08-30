@@ -14,6 +14,8 @@ namespace CSharpAnalysis
         public int MethodCount => _analyses.Sum(a => a.MethodCount);
         public int VirtualMethodCount => _analyses.Sum(a => a.VirtualMethodCount);
         public int OverrideMethodCount => _analyses.Sum(a => a.OverrideMethodCount);
+        public int ClassesWithVirtualDowncallsInConstructorsCount
+            => _analyses.Sum(a => a.ClassesWithVirtualDowncallsInConstructorsCount);
 
         public Project(string projectDirectory)
         {

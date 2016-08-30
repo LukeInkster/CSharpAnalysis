@@ -10,7 +10,7 @@ namespace CSharpAnalysis
     {
         public Dictionary<string, MethodDetails> AllMethodDetails = new Dictionary<string, MethodDetails>();
 
-        public MethodDetails this[string key] => AllMethodDetails[key];
+        public MethodDetails this[string key] => AllMethodDetails.ContainsKey(key) ? AllMethodDetails[key] : null;
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {

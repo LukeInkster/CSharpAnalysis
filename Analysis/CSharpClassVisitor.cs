@@ -36,7 +36,8 @@ namespace CSharpAnalysis
             if (_inConstructor && IsLocalMethodCall(context))
             {
                 var methodName = GetLocalMethodCallName(context);
-                if (_methodFinder[methodName].IsVirtual)
+                var methodDetails = _methodFinder[methodName];
+                if (methodDetails != null && methodDetails.IsVirtual)
                 {
                     ContainsVirtualDowncallInConstructor = true;
                 }

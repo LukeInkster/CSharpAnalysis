@@ -4,7 +4,7 @@ namespace CSharpAnalysis
 {
     public class Program
     {
-        private const string CorpusDirectory = @"C:\Dev\CSharpCorpusMini\";
+        private const string CorpusDirectory = @"C:\Dev\test\";
 
         public static void Main(string[] args)
         {

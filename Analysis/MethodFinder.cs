@@ -1,70 +1,51 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
-    public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
+    public class MethodFinder : CSharpParserBaseVisitor<int>
     {
-        public bool ClassIsExtending { get; private set; }
-        public int ClassCount { get; private set; }
-        public int MethodCount { get; private set; }
-        public int VirtualMethodCount { get; private set; }
-        public int OverrideMethodCount { get; private set; }
+        public Dictionary<string, MethodDetails> AllMethodDetails = new Dictionary<string, MethodDetails>();
 
-        private bool _alreadyInClass;
-        private MethodFinder _methodFinder;
-
-        public CSharpClassVisitor(MethodFinder methodFinder)
-        {
-            _methodFinder = methodFinder;
-        }
-
-        public override int VisitClass_definition(CSharpParser.Class_definitionContext context)
-        {
-            if (_alreadyInClass)
-            {
-                // each class has its own visitor, so if we find one when we're already in
-                // a class then we leave it to the other visitor that will be created
-                return 0;
-            }
-            _alreadyInClass = true;
-            if (ClassHasSuperClass(context))
-            {
-                ClassIsExtending = true;
-            }
-            return base.VisitClass_definition(context);
-        }
-
-        private static bool ClassHasSuperClass(CSharpParser.Class_definitionContext context)
-        {
-            return context
-                .children
-                .Any(child => child is CSharpParser.Class_baseContext);
-        }
-
-        public override int VisitClass_body(CSharpParser.Class_bodyContext context)
-        {
-            ClassCount++;
-            return base.VisitClass_body(context);
-        }
+        public MethodDetails this[string key] => AllMethodDetails[key];
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {
-            if (MemberDeclarationIsMethod(context))
+            if (!MemberDeclarationIsMethod(context)) return base.VisitClass_member_declaration(context);
+
+            var methodDetails = new MethodDetails
             {
-                MethodCount++;
-                if (MethodDeclarationIsVirtual(context))
-                {
-                    VirtualMethodCount++;
-                }
-                if (MethodDeclarationIsOverride(context))
-                {
-                    OverrideMethodCount++;
-                }
-            }
+                IsVirtual = MethodDeclarationIsVirtual(context),
+                IsOverride = MethodDeclarationIsOverride(context)
+            };
+
+            AllMethodDetails[MethodName(context)] = methodDetails;
+
             return base.VisitClass_member_declaration(context);
+        }
+
+        private static string MethodName(CSharpParser.Class_member_declarationContext context)
+        {
+            var grandChildren = GrandChildrenOf(context).ToList();
+
+            var methodDeclaration = grandChildren
+                .Where(IsMethodDeclarationTree)
+                .Concat(grandChildren
+                    .Where(grandChild => grandChild is CSharpParser.Typed_member_declarationContext)
+                    .SelectMany(grandChild => ChildrenOf(grandChild).Where(IsMethodDeclarationTree))
+                )
+                .FirstOrDefault() as CSharpParser.Method_declarationContext;
+
+            if (methodDeclaration == null) return string.Empty;
+
+            var methodMemberNameContext = ChildrenOf(methodDeclaration)
+                .OfType<CSharpParser.Method_member_nameContext>()
+                .FirstOrDefault();
+
+            return methodMemberNameContext == null ? string.Empty : methodMemberNameContext.GetText();
         }
 
         private static bool MethodDeclarationIsVirtual(CSharpParser.Class_member_declarationContext context)
@@ -135,9 +116,11 @@ namespace CSharpAnalysis
                 .Equals("override", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static void Print(string s)
-        {
-            System.Diagnostics.Debug.Write("\n"+s);
-        }
+    }
+
+    public class MethodDetails
+    {
+        public bool IsVirtual { get; set; }
+        public bool IsOverride { get; set; }
     }
 }

@@ -14,11 +14,49 @@ namespace CSharpAnalysis
         public int OverrideMethodCount { get; private set; }
 
         private bool _alreadyInClass;
+        private bool _inConstructor;
         private MethodFinder _methodFinder;
 
         public CSharpClassVisitor(MethodFinder methodFinder)
         {
+            Console.WriteLine("Hi");
             _methodFinder = methodFinder;
+        }
+
+        public override int VisitConstructor_declaration(CSharpParser.Constructor_declarationContext context)
+        {
+            _inConstructor = true;
+            var result = base.VisitConstructor_declaration(context);
+            _inConstructor = false;
+            return result;
+        }
+
+        public override int VisitPrimary_expression(CSharpParser.Primary_expressionContext context)
+        {
+            //Print(context.GetText());
+            if (_inConstructor && IsLocalMethodCall(context))
+            {
+                Print("Found a downcall in a constructor!");
+                Print(context.GetText());
+            }
+            return base.VisitPrimary_expression(context);
+        }
+
+        private static bool IsLocalMethodCall(CSharpParser.Primary_expressionContext context)
+        {
+            // method()
+            if (context.ChildCount == 2 &&
+                context.children[0] is CSharpParser.SimpleNameExpressionContext &&
+                context.children[1] is CSharpParser.Method_invocationContext)
+            {
+                return true;
+            }
+
+            // this.method()
+            return context.ChildCount == 3 &&
+                   context.children[0].GetText() == "this" &&
+                   context.children[1] is CSharpParser.Member_accessContext &&
+                   context.children[2] is CSharpParser.Method_invocationContext;
         }
 
         public override int VisitClass_definition(CSharpParser.Class_definitionContext context)

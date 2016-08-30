@@ -8,7 +8,7 @@ namespace CSharpAnalysis
 {
     public class FileAnalysis
     {
-        private readonly IEnumerable<ClassAnalysis> _classAnalyses;
+        private readonly List<ClassAnalysis> _classAnalyses;
         public int ClassCount => _classAnalyses.Sum(c => c.ClassCount);
         public int ExtendingClassCount => _classAnalyses.Count(c => c.ClassIsExtending);
         public int MethodCount => _classAnalyses.Sum(c => c.MethodCount);
@@ -23,10 +23,11 @@ namespace CSharpAnalysis
             }
         }
 
-        private static IEnumerable<ClassAnalysis> Analyse(IEnumerable<CSharpParser.Class_definitionContext> classDefinitions)
+        private static List<ClassAnalysis> Analyse(IEnumerable<CSharpParser.Class_definitionContext> classDefinitions)
         {
             return classDefinitions
-                .Select(classDef => new ClassAnalysis(classDef));
+                .Select(classDef => new ClassAnalysis(classDef))
+                .ToList();
         }
 
         private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)

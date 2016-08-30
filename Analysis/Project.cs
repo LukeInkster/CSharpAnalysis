@@ -6,18 +6,13 @@ namespace CSharpAnalysis
 {
     public class Project
     {
-        public readonly List<FileAnalysis> Analyses;
+        public readonly List<FileAnalysis> FileAnalyses;
 
-        public int FileCount => Analyses.Count;
-        public int ClassCount => Analyses.Sum(a => a.ClassCount);
-        public int ExtendingClassCount => Analyses.Sum(a => a.ExtendingClassCount);
-        public int MethodCount => Analyses.Sum(a => a.MethodCount);
-        public int VirtualMethodCount => Analyses.Sum(a => a.VirtualMethodCount);
-        public int OverrideMethodCount => Analyses.Sum(a => a.OverrideMethodCount);
+        public int FileCount => FileAnalyses.Count;
 
         public Project(string projectDirectory)
         {
-            Analyses = Analyse(CSharpFilesIn(projectDirectory));
+            FileAnalyses = Analyse(CSharpFilesIn(projectDirectory));
         }
 
         private static List<FileAnalysis> Analyse(List<string> files)

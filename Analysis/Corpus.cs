@@ -7,25 +7,21 @@ namespace CSharpAnalysis
     public class Corpus
     {
         public readonly List<Project> Projects;
+        public IEnumerable<ClassAnalysis> AllClassAnalyses => Projects
+                .SelectMany(p => p.FileAnalyses)
+                .SelectMany(a => a.ClassAnalyses);
 
         public int ProjectCount => Projects.Count;
         public int FileCount => Projects.Sum(p => p.FileCount);
-        public int ClassCount => Projects.Sum(p => p.ClassCount);
-        public int ExtendingClassCount => Projects.Sum(p => p.ExtendingClassCount);
-        public int MethodCount => Projects.Sum(p => p.MethodCount);
-        public int VirtualMethodCount => Projects.Sum(p => p.VirtualMethodCount);
-        public int OverrideMethodCount => Projects.Sum(p => p.OverrideMethodCount);
+        public int ClassCount => AllClassAnalyses.Count();
+        public int ExtendingClassCount => AllClassAnalyses.Count(p => p.ClassIsExtending);
+        public int MethodCount => AllClassAnalyses.Sum(p => p.MethodCount);
+        public int VirtualMethodCount => AllClassAnalyses.Sum(c => c.VirtualMethodCount);
+        public int OverrideMethodCount => AllClassAnalyses.Sum(c => c.OverrideMethodCount);
         public int ClassesWithVirtualDowncallsInConstructorsCount
-            => AllClassAnalyses().Count(c => c.ContainsVirtualDowncallInConstructor);
+            => AllClassAnalyses.Count(c => c.ContainsVirtualDowncallInConstructor);
         public int ClassesWithOverrideDowncallsInConstructorsCount
-            => AllClassAnalyses().Count(c => c.ContainsOverrideDowncallInConstructor);
-
-        public IEnumerable<ClassAnalysis> AllClassAnalyses()
-        {
-            return Projects
-                .SelectMany(p => p.Analyses)
-                .SelectMany(a => a.ClassAnalyses);
-        }
+            => AllClassAnalyses.Count(c => c.ContainsOverrideDowncallInConstructor);
 
         public Corpus(string directory)
         {

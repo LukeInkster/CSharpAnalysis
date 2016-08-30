@@ -10,10 +10,6 @@ namespace CSharpAnalysis
     {
         public readonly List<ClassAnalysis> ClassAnalyses;
         public int ClassCount => ClassAnalyses.Sum(c => c.ClassCount);
-        public int ExtendingClassCount => ClassAnalyses.Count(c => c.ClassIsExtending);
-        public int MethodCount => ClassAnalyses.Sum(c => c.MethodCount);
-        public int VirtualMethodCount => ClassAnalyses.Sum(c => c.VirtualMethodCount);
-        public int OverrideMethodCount => ClassAnalyses.Sum(c => c.OverrideMethodCount);
 
         public FileAnalysis(string file)
         {

@@ -2,7 +2,7 @@
 {
     public class ClassAnalysis
     {
-        public bool ClassIsExtending { get; }
+        public string SuperClassName { get; }
         public int ClassCount { get; }
         public int MethodCount { get; }
         public int VirtualMethodCount { get; }
@@ -25,7 +25,7 @@
             visitor.VisitClass_definition(classDef);
 
             ClassCount = visitor.ClassCount;
-            ClassIsExtending = visitor.ClassIsExtending;
+            SuperClassName = visitor.SuperClassName;
             MethodCount = visitor.MethodCount;
             VirtualMethodCount = visitor.VirtualMethodCount;
             OverrideMethodCount = visitor.OverrideMethodCount;

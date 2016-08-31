@@ -7,7 +7,7 @@ namespace CSharpAnalysis
 {
     public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
     {
-        public bool ClassIsExtending { get; private set; }
+        public string SuperClassName { get; private set; }
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
@@ -111,10 +111,8 @@ namespace CSharpAnalysis
                 return 0;
             }
             _alreadyInClass = true;
-            if (ClassHasSuperClass(context))
-            {
-                ClassIsExtending = true;
-            }
+            SuperClassName = FindSuperClassName(context);
+
             return base.VisitClass_definition(context);
         }
 
@@ -123,6 +121,16 @@ namespace CSharpAnalysis
             return context
                 .children
                 .Any(child => child is CSharpParser.Class_baseContext);
+        }
+
+        private static string FindSuperClassName(CSharpParser.Class_definitionContext context)
+        {
+            return context
+                .children
+                .FirstOrDefault(child => child is CSharpParser.Class_baseContext)
+                ?.Children()
+                ?.FirstOrDefault(grandChild => grandChild is CSharpParser.Class_typeContext)
+                ?.GetText();
         }
 
         public override int VisitClass_body(CSharpParser.Class_bodyContext context)

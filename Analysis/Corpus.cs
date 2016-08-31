@@ -14,8 +14,8 @@ namespace CSharpAnalysis
         public int ProjectCount => Projects.Count;
         public int FileCount => Projects.Sum(p => p.FileCount);
         public int ClassCount => AllClassAnalyses.Count();
-        public int ExtendingClassCount => AllClassAnalyses.Count(p => p.ClassIsExtending);
-        public int MethodCount => AllClassAnalyses.Sum(p => p.MethodCount);
+        public int ExtendingClassCount => AllClassAnalyses.Count(c => c.SuperClassName != null);
+        public int MethodCount => AllClassAnalyses.Sum(c => c.MethodCount);
         public int VirtualMethodCount => AllClassAnalyses.Sum(c => c.VirtualMethodCount);
         public int OverrideMethodCount => AllClassAnalyses.Sum(c => c.OverrideMethodCount);
         public int ClassesWithVirtualDowncallsInConstructorsCount

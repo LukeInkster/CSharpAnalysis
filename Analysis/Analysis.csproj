@@ -65,6 +65,7 @@
     <Compile Include="GeneratedFiles\CSharpPreprocessorParserBaseVisitor.cs" />
     <Compile Include="GeneratedFiles\CSharpPreprocessorParserListener.cs" />
     <Compile Include="GeneratedFiles\CSharpPreprocessorParserVisitor.cs" />
+    <Compile Include="ParseTreeExtensions.cs" />
     <Compile Include="MethodFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />

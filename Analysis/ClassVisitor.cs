@@ -29,6 +29,20 @@ namespace CSharpAnalysis
 
         public override int VisitConstructor_declaration(CSharpParser.Constructor_declarationContext context)
         {
+            if (context
+                .parent
+                .parent
+                .ChildrenOfType<CSharpParser.All_member_modifiersContext>()
+                .FirstOrDefault()
+                ?.GetText()
+                ?.Contains("static")
+                ?? false)
+            {
+                // if we're in a static constructor, just pretend we're not
+                // in a constructor at all. This is because virtual calls
+                // aren't an issue in static context
+                return base.VisitConstructor_declaration(context);
+            }
             _inConstructor = true;
             var result = base.VisitConstructor_declaration(context);
             _inConstructor = false;
@@ -61,6 +75,7 @@ namespace CSharpAnalysis
                 // We couldn't find the method
                 if (methodDetails == null)
                 {
+                    Print(methodName + " " + _firstPassDetails.ClassName + " " + _firstPassDetails.SuperClassName);
                     ContainsUntracedMethodCallInConstructor = true;
                 }
                 // We found the method, look at its modifiers
@@ -92,7 +107,7 @@ namespace CSharpAnalysis
 
             if (name != null)
             {
-                return name;
+                return Format(name);
             }
 
             var memberAccess = context
@@ -100,11 +115,18 @@ namespace CSharpAnalysis
                 .FirstOrDefault(child => child is CSharpParser.Member_accessContext)
                 as CSharpParser.Member_accessContext;
 
-            return memberAccess
+            name = memberAccess
                 ?.children
                 ?.FirstOrDefault(child => child is CSharpParser.IdentifierContext)
                 ?.GetText()
                 ?? string.Empty;
+
+            return Format(name);
+        }
+
+        private static string Format(string name)
+        {
+            return name.Split('<')[0];
         }
 
         private static bool IsLocalMethodCall(CSharpParser.Primary_expressionContext context)
@@ -112,6 +134,8 @@ namespace CSharpAnalysis
             // method()
             if (context.ChildCount == 2 &&
                 context.children[0] is CSharpParser.SimpleNameExpressionContext &&
+                   context.children[0].GetText() != "nameof" &&
+                   context.children[0].GetText() != "typeof" &&
                 context.children[1] is CSharpParser.Method_invocationContext)
             {
                 return true;
@@ -121,6 +145,8 @@ namespace CSharpAnalysis
             return context.ChildCount == 3 &&
                    context.children[0].GetText() == "this" &&
                    context.children[1] is CSharpParser.Member_accessContext &&
+                   context.children[1].GetText() != "nameof" &&
+                   context.children[1].GetText() != "typeof" &&
                    context.children[2] is CSharpParser.Method_invocationContext;
         }
 

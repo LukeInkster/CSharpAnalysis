@@ -1,0 +1,12 @@
+Projects: 15
+Files: 8154
+Classes: 15706
+Extending Classes: 7033
+Methods: 37745
+Virtual Methods: 5624
+Override Methods: 6229
+Classes with calls to local methods in constructors: 420
+Classes with calls to local virtual methods in constructors: 26
+Classes with calls to local override methods in constructors: 22
+Classes with calls to local abstract methods in constructors: 5
+Classes with calls to methods that couldn't be found in constructors: 189

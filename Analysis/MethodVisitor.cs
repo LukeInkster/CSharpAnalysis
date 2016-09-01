@@ -77,6 +77,26 @@ namespace CSharpAnalysis
             return base.VisitStruct_member_declaration(context);
         }
 
+        public override int VisitDelegate_definition(CSharpParser.Delegate_definitionContext context)
+        {
+            var methodDetails = new MethodDetails
+            {
+                IsDelegate = true
+            };
+
+            FirstPassDetails.AllMethodDetails[DelegateName(context)] = methodDetails;
+            return base.VisitDelegate_definition(context);
+        }
+
+        private static string DelegateName(CSharpParser.Delegate_definitionContext context)
+        {
+            return context
+                .ChildrenOfType<CSharpParser.IdentifierContext>()
+                .FirstOrDefault()
+                ?.GetText()
+                ?? string.Empty;
+        }
+
         private static string MethodName(IParseTree context)
         {
             // Void methods:
@@ -97,7 +117,14 @@ namespace CSharpAnalysis
                 .ChildrenOfType<CSharpParser.Method_member_nameContext>()
                 .FirstOrDefault();
 
-            return methodMemberNameContext == null ? string.Empty : methodMemberNameContext.GetText();
+            return methodMemberNameContext == null
+                ? string.Empty
+                : Format(methodMemberNameContext.GetText());
+        }
+
+        private static string Format(string name)
+        {
+            return name.Split('<')[0];
         }
     }
 
@@ -118,5 +145,6 @@ namespace CSharpAnalysis
         public bool IsVirtual { get; set; }
         public bool IsOverride { get; set; }
         public bool IsAbstract { get; set; }
+        public bool IsDelegate { get; set; }
     }
 }

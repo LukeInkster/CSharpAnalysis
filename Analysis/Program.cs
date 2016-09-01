@@ -6,6 +6,7 @@ namespace CSharpAnalysis
     {
         //private const string CorpusDirectory = @"C:\Dev\test\";
         private const string CorpusDirectory = @"C:\Dev\CSharpCorpusMini\";
+        //private const string CorpusDirectory = @"C:\Dev\CSharpCorpusSuperMini\";
 
         public static void Main(string[] args)
         {

@@ -33,7 +33,8 @@ namespace CSharpAnalysis
             var methodDetails = new MethodDetails
             {
                 IsVirtual = context.IsVirtualMethodDeclaration(),
-                IsOverride = context.IsOverrideMethodDeclaration()
+                IsOverride = context.IsOverrideMethodDeclaration(),
+                IsAbstract = context.IsAbstractMethodDeclaration()
             };
 
             AllMethodDetails[MethodName(context)] = methodDetails;

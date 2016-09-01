@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
@@ -20,11 +18,11 @@ namespace CSharpAnalysis
 
         private bool _alreadyInClass;
         private bool _inConstructor;
-        private readonly MethodVisitor _methodFinder;
+        private readonly Dictionary<string, MethodDetails> _methodDetails;
 
-        public ClassVisitor(MethodVisitor methodFinder)
+        public ClassVisitor(Dictionary<string, MethodDetails> methodDetails)
         {
-            _methodFinder = methodFinder;
+            _methodDetails = methodDetails;
         }
 
         public override int VisitConstructor_declaration(CSharpParser.Constructor_declarationContext context)
@@ -40,7 +38,9 @@ namespace CSharpAnalysis
             if (_inConstructor && IsLocalMethodCall(context))
             {
                 var methodName = GetLocalMethodCallName(context);
-                var methodDetails = _methodFinder[methodName];
+                var methodDetails = _methodDetails.ContainsKey(methodName)
+                    ? _methodDetails[methodName]
+                    : null;
 
                 ContainsLocalMethodCallInConstructor = true;
                 if (methodDetails == null)

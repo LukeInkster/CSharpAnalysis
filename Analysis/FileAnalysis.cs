@@ -28,7 +28,7 @@ namespace CSharpAnalysis
 
         private static List<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
         {
-            var children = ChildrenOf(tree).ToList();
+            var children = tree.Children().ToList();
 
             return children
                 .OfType<CSharpParser.Class_definitionContext>()
@@ -100,13 +100,6 @@ namespace CSharpAnalysis
             var parser = new CSharpParser(codeTokenStream);
             // Parse syntax tree (CSharpParser.g4)
             return parser.compilation_unit();
-        }
-
-        private static IEnumerable<IParseTree> ChildrenOf(IParseTree tree)
-        {
-            return Enumerable
-                .Range(0, tree.ChildCount)
-                .Select(tree.GetChild);
         }
     }
 }

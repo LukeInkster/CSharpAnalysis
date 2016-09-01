@@ -8,8 +8,7 @@ namespace CSharpAnalysis
     {
         public readonly List<Project> Projects;
         public IEnumerable<ClassAnalysis> AllClassAnalyses => Projects
-                .SelectMany(p => p.FileAnalyses)
-                .SelectMany(a => a.ClassAnalyses);
+                .SelectMany(p => p.ClassAnalyses);
 
         public int ProjectCount => Projects.Count;
         public int FileCount => Projects.Sum(p => p.FileCount);

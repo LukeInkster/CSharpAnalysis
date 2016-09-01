@@ -14,6 +14,7 @@ namespace CSharpAnalysis
         public int OverrideMethodCount { get; private set; }
         public bool ContainsLocalVirtualCallInConstructor { get; private set; }
         public bool ContainsLocalOverrideCallInConstructor { get; private set; }
+        public bool ContainsLocalAbstractCallInConstructor { get; private set; }
         public bool ContainsLocalMethodCallInConstructor { get; private set; }
         public bool ContainsUntracedMethodCallInConstructor { get; private set; }
 
@@ -55,6 +56,10 @@ namespace CSharpAnalysis
                     if (methodDetails.IsOverride)
                     {
                         ContainsLocalOverrideCallInConstructor = true;
+                    }
+                    if (methodDetails.IsAbstract)
+                    {
+                        ContainsLocalAbstractCallInConstructor = true;
                     }
                 }
             }

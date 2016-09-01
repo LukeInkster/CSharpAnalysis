@@ -9,6 +9,7 @@
         public int OverrideMethodCount { get; }
         public bool ContainsLocalVirtualCallInConstructor { get; }
         public bool ContainsLocalOverrideCallInConstructor { get; }
+        public bool ContainsLocalAbstractCallInConstructor { get; }
         public bool ContainsLocalMethodCallInConstructor { get; }
         public bool ContainsUntracedMethodCallInConstructor { get; }
 
@@ -32,6 +33,7 @@
             ContainsLocalMethodCallInConstructor = visitor.ContainsLocalMethodCallInConstructor;
             ContainsLocalVirtualCallInConstructor = visitor.ContainsLocalVirtualCallInConstructor;
             ContainsLocalOverrideCallInConstructor = visitor.ContainsLocalOverrideCallInConstructor;
+            ContainsLocalAbstractCallInConstructor = visitor.ContainsLocalAbstractCallInConstructor;
             ContainsUntracedMethodCallInConstructor = visitor.ContainsUntracedMethodCallInConstructor;
         }
     }

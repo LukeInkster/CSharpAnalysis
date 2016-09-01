@@ -1,8 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
@@ -20,7 +17,8 @@ namespace CSharpAnalysis
             var methodDetails = new MethodDetails
             {
                 IsVirtual = context.IsVirtualMethodDeclaration(),
-                IsOverride = context.IsOverrideMethodDeclaration()
+                IsOverride = context.IsOverrideMethodDeclaration(),
+                IsAbstract = context.IsAbstractMethodDeclaration()
             };
 
             AllMethodDetails[MethodName(context)] = methodDetails;
@@ -71,5 +69,6 @@ namespace CSharpAnalysis
     {
         public bool IsVirtual { get; set; }
         public bool IsOverride { get; set; }
+        public bool IsAbstract { get; set; }
     }
 }

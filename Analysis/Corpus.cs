@@ -22,7 +22,9 @@ namespace CSharpAnalysis
             => AllClassAnalyses.Count(c => c.ContainsLocalVirtualCallInConstructor);
         public int ClassesWithOverrideDowncallsInConstructorsCount
             => AllClassAnalyses.Count(c => c.ContainsLocalOverrideCallInConstructor);
-        public int ClassesWithLocalMethodCallsInConstructosCount
+        public int ClassesWithAbstractDowncallsInConstructorsCount
+            => AllClassAnalyses.Count(c => c.ContainsLocalAbstractCallInConstructor);
+        public int ClassesWithLocalMethodCallsInConstructorsCount
             => AllClassAnalyses.Count(c => c.ContainsLocalMethodCallInConstructor);
         public int ClassesWithUntracedCallsInConstructorsCount
             => AllClassAnalyses.Count(c => c.ContainsUntracedMethodCallInConstructor);

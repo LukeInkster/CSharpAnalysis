@@ -99,6 +99,13 @@ namespace CSharpAnalysis
                 ?? false;
         }
 
+        public static bool IsAbstractMethodDeclaration(this IParseTree context)
+        {
+            return (context as CSharpParser.Class_member_declarationContext)
+                ?.AnyModifier(IsAbstractModifier)
+                ?? false;
+        }
+
         public static bool AnyModifier(this CSharpParser.Class_member_declarationContext tree, Func<IParseTree, bool> predicate)
         {
             return tree
@@ -128,6 +135,11 @@ namespace CSharpAnalysis
         private static bool IsOverrideModifier(IParseTree tree)
         {
             return tree.TextEqualsIgnoreCase("override");
+        }
+
+        private static bool IsAbstractModifier(IParseTree tree)
+        {
+            return tree.TextEqualsIgnoreCase("abstract");
         }
     }
 }

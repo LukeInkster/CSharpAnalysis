@@ -5,7 +5,7 @@ namespace CSharpAnalysis
 {
     public class ClassVisitor : CSharpParserBaseVisitor<int>
     {
-        public string SuperClassName { get; private set; }
+        public string SuperClassName => _firstPassDetails.ClassName;
         public int ClassCount { get; private set; }
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
@@ -18,11 +18,13 @@ namespace CSharpAnalysis
 
         private bool _alreadyInClass;
         private bool _inConstructor;
-        private readonly Dictionary<string, MethodDetails> _methodDetails;
+        private readonly FirstPassDetails _firstPassDetails;
+        private readonly Dictionary<string, ClassAnalysis> _classNameToAnalysis;
 
-        public ClassVisitor(Dictionary<string, MethodDetails> methodDetails)
+        public ClassVisitor(FirstPassDetails firstPassDetails, Dictionary<string, ClassAnalysis> classNameToAnalysis)
         {
-            _methodDetails = methodDetails;
+            _firstPassDetails = firstPassDetails;
+            _classNameToAnalysis = classNameToAnalysis;
         }
 
         public override int VisitConstructor_declaration(CSharpParser.Constructor_declarationContext context)
@@ -37,16 +39,31 @@ namespace CSharpAnalysis
         {
             if (_inConstructor && IsLocalMethodCall(context))
             {
-                var methodName = GetLocalMethodCallName(context);
-                var methodDetails = _methodDetails.ContainsKey(methodName)
-                    ? _methodDetails[methodName]
-                    : null;
-
                 ContainsLocalMethodCallInConstructor = true;
+
+                var methodName = GetLocalMethodCallName(context);
+                MethodDetails methodDetails = null;
+                var classToCheck = _firstPassDetails;
+
+                // Try to find a class in the hierarchy that defines the method we're looking for
+                while (methodDetails == null && classToCheck != null)
+                {
+                    methodDetails = classToCheck.AllMethodDetails.ContainsKey(methodName)
+                        ? classToCheck.AllMethodDetails[methodName]
+                        : null;
+
+                    if (classToCheck.SuperClassName == null ||
+                        !_classNameToAnalysis.ContainsKey(classToCheck.SuperClassName)) break;
+
+                    classToCheck = _classNameToAnalysis[classToCheck.SuperClassName].FirstPassDetails();
+                }
+
+                // We couldn't find the method
                 if (methodDetails == null)
                 {
                     ContainsUntracedMethodCallInConstructor = true;
                 }
+                // We found the method, look at its modifiers
                 else
                 {
                     if (methodDetails.IsVirtual)
@@ -116,19 +133,8 @@ namespace CSharpAnalysis
                 return 0;
             }
             _alreadyInClass = true;
-            SuperClassName = FindSuperClassName(context);
 
             return base.VisitClass_definition(context);
-        }
-
-        private static string FindSuperClassName(CSharpParser.Class_definitionContext context)
-        {
-            return context
-                .ChildrenOfType<CSharpParser.Class_baseContext>()
-                .FirstOrDefault()
-                ?.ChildrenOfType<CSharpParser.Class_typeContext>()
-                ?.FirstOrDefault()
-                ?.GetText();
         }
 
         public override int VisitClass_body(CSharpParser.Class_bodyContext context)

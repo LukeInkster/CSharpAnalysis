@@ -6,9 +6,44 @@ namespace CSharpAnalysis
 {
     public class MethodVisitor : CSharpParserBaseVisitor<int>
     {
-        public Dictionary<string, MethodDetails> AllMethodDetails = new Dictionary<string, MethodDetails>();
+        public FirstPassDetails FirstPassDetails = new FirstPassDetails();
 
-        public MethodDetails this[string key] => AllMethodDetails.ContainsKey(key) ? AllMethodDetails[key] : null;
+        public MethodDetails this[string key] => 
+            FirstPassDetails.AllMethodDetails.ContainsKey(key)
+            ? FirstPassDetails.AllMethodDetails[key]
+            : null;
+
+        private bool _alreadyInClass;
+
+        public override int VisitClass_definition(CSharpParser.Class_definitionContext context)
+        {
+            if (_alreadyInClass) return 0;
+
+            _alreadyInClass = true;
+
+            FirstPassDetails.ClassName = ClassName(context);
+            FirstPassDetails.SuperClassName = SuperClassName(context);
+
+            return base.VisitClass_definition(context);
+        }
+
+        private static string ClassName(CSharpParser.Class_definitionContext context)
+        {
+            return context
+                .ChildrenOfType<CSharpParser.IdentifierContext>()
+                .FirstOrDefault()
+                ?.GetText();
+        }
+
+        private static string SuperClassName(CSharpParser.Class_definitionContext context)
+        {
+            return context
+                .ChildrenOfType<CSharpParser.Class_baseContext>()
+                .FirstOrDefault()
+                ?.ChildrenOfType<CSharpParser.Class_typeContext>()
+                ?.FirstOrDefault()
+                ?.GetText();
+        }
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {
@@ -21,7 +56,7 @@ namespace CSharpAnalysis
                 IsAbstract = context.IsAbstractMethodDeclaration()
             };
 
-            AllMethodDetails[MethodName(context)] = methodDetails;
+            FirstPassDetails.AllMethodDetails[MethodName(context)] = methodDetails;
 
             return base.VisitClass_member_declaration(context);
         }
@@ -37,7 +72,7 @@ namespace CSharpAnalysis
                 IsAbstract = context.IsAbstractMethodDeclaration()
             };
 
-            AllMethodDetails[MethodName(context)] = methodDetails;
+            FirstPassDetails.AllMethodDetails[MethodName(context)] = methodDetails;
 
             return base.VisitStruct_member_declaration(context);
         }
@@ -63,6 +98,18 @@ namespace CSharpAnalysis
                 .FirstOrDefault();
 
             return methodMemberNameContext == null ? string.Empty : methodMemberNameContext.GetText();
+        }
+    }
+
+    public class FirstPassDetails
+    {
+        public string ClassName { get; set; }
+        public string SuperClassName { get; set; }
+        public Dictionary<string, MethodDetails> AllMethodDetails { get; set; }
+
+        public FirstPassDetails()
+        {
+            AllMethodDetails = new Dictionary<string, MethodDetails>();
         }
     }
 

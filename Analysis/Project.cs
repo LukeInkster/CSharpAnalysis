@@ -20,18 +20,19 @@ namespace CSharpAnalysis
             var classDefinitions = cSharpFiles.SelectMany(ClassDefinitions);
             ClassAnalyses = classDefinitions.Select(c => new ClassAnalysis(c)).ToList();
 
-            var classNameToMethodDetails = new Dictionary<string, Dictionary<string, MethodDetails>>();
+            var classNameToAnalysis = new Dictionary<string, ClassAnalysis>();
 
             foreach (var classAnalysis in ClassAnalyses)
             {
-                var className = classAnalysis.ClassName();
-                var methodDetails = classAnalysis.MethodDetails();
-                classNameToMethodDetails[className] = methodDetails;
+                // Do a first pass to fill in class/superclass names and method details
+                classAnalysis.FirstPassDetails();
+                // Then put it in a map so other analyses can find it
+                classNameToAnalysis[classAnalysis.ClassName] = classAnalysis;
             }
 
             foreach (var classAnalysis in ClassAnalyses)
             {
-                classAnalysis.Analyse(classNameToMethodDetails);
+                classAnalysis.Analyse(classNameToAnalysis);
             }
 
 

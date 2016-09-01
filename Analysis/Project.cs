@@ -33,12 +33,6 @@ namespace CSharpAnalysis
             {
                 classAnalysis.Analyse(classNameToMethodDetails);
             }
-
-
-            //var classNameToMethodDetails = classDefinitions
-            //    .ToDictionary(GetClassName, GetMethodsDetails);
-
-            //FileAnalyses = Analyse(CSharpFilesIn(projectDirectory));
         }
 
         private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitions(string file)
@@ -49,13 +43,6 @@ namespace CSharpAnalysis
             }
         }
 
-        private static List<FileAnalysis> Analyse(IEnumerable<string> files)
-        {
-            return files
-                .Select(file => new FileAnalysis(file))
-                .ToList();
-        }
-
         private static List<string> CSharpFilesIn(string dir)
         {
             return Directory.EnumerateFiles(
@@ -64,20 +51,6 @@ namespace CSharpAnalysis
                 searchOption: SearchOption.AllDirectories)
                 .ToList();
         }
-
-        //private static List<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
-        //{
-        //    var children = tree.Children().ToList();
-
-        //    return children
-        //        // Grab all the class defs at this level
-        //        .OfType<CSharpParser.Class_definitionContext>()
-        //        // Then recursive search the children
-        //        .Concat(children.SelectMany(ClassDefinitionsIn))
-        //        // Then force evaluation to allow whole project class name searching without
-        //        // having to compile again for the later steps
-        //        .ToList();
-        //}
 
         private static List<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
         {

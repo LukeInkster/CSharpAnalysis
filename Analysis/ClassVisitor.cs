@@ -5,7 +5,7 @@ using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
-    public class CSharpClassVisitor : CSharpParserBaseVisitor<int>
+    public class ClassVisitor : CSharpParserBaseVisitor<int>
     {
         public string SuperClassName { get; private set; }
         public int ClassCount { get; private set; }
@@ -19,9 +19,9 @@ namespace CSharpAnalysis
 
         private bool _alreadyInClass;
         private bool _inConstructor;
-        private readonly MethodFinder _methodFinder;
+        private readonly MethodVisitor _methodFinder;
 
-        public CSharpClassVisitor(MethodFinder methodFinder)
+        public ClassVisitor(MethodVisitor methodFinder)
         {
             _methodFinder = methodFinder;
         }

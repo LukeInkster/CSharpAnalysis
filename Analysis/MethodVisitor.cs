@@ -7,7 +7,7 @@ using Antlr4.Runtime.Tree;
 
 namespace CSharpAnalysis
 {
-    public class MethodFinder : CSharpParserBaseVisitor<int>
+    public class MethodVisitor : CSharpParserBaseVisitor<int>
     {
         public Dictionary<string, MethodDetails> AllMethodDetails = new Dictionary<string, MethodDetails>();
 
@@ -45,6 +45,10 @@ namespace CSharpAnalysis
 
         private static string MethodName(IParseTree context)
         {
+            // Void methods:
+            // -  a grandchild node is a Method_declarationContext
+            // Non-void methods:
+            // -  a grandchild node is Typed_member_declarationContext which has a Method_declarationContext child
             var methodDeclaration = context
                 .GrandChildrenOfType<CSharpParser.Method_declarationContext>()
                 .Concat(context

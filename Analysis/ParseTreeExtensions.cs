@@ -65,7 +65,7 @@ namespace CSharpAnalysis
                 .Equals(text, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static bool IsMethodDeclaration(this CSharpParser.Class_member_declarationContext context)
+        public static bool IsMethodDeclaration(this IParseTree context)
         {
             // Void methods:
             // -  a grandchild node is a Method_declarationContext
@@ -80,7 +80,7 @@ namespace CSharpAnalysis
                     );
         }
 
-        public static bool IsMethodDeclarationTree(this IParseTree context)
+        private static bool IsMethodDeclarationTree(this IParseTree context)
         {
             return context is CSharpParser.Method_declarationContext;
         }
@@ -110,6 +110,13 @@ namespace CSharpAnalysis
         {
             return context
                 .Children()
+                .OfType<T>();
+        }
+
+        public static IEnumerable<T> GrandChildrenOfType<T>(this IParseTree context) where T : IParseTree
+        {
+            return context
+                .GrandChildren()
                 .OfType<T>();
         }
 

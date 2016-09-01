@@ -15,7 +15,7 @@ namespace CSharpAnalysis
             FileAnalyses = Analyse(CSharpFilesIn(projectDirectory));
         }
 
-        private static List<FileAnalysis> Analyse(List<string> files)
+        private static List<FileAnalysis> Analyse(IEnumerable<string> files)
         {
             return files
                 .Select(file => new FileAnalysis(file))

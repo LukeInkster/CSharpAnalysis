@@ -19,20 +19,21 @@ namespace CSharpAnalysis
             }
         }
 
-        private static List<ClassAnalysis> Analyse(IEnumerable<CSharpParser.Class_definitionContext> classDefinitions)
+        private static List<ClassAnalysis> Analyse(List<CSharpParser.Class_definitionContext> classDefinitions)
         {
             return classDefinitions
                 .Select(classDef => new ClassAnalysis(classDef))
                 .ToList();
         }
 
-        private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
+        private static List<CSharpParser.Class_definitionContext> ClassDefinitionsIn(IParseTree tree)
         {
             var children = ChildrenOf(tree).ToList();
 
             return children
                 .OfType<CSharpParser.Class_definitionContext>()
-                .Concat(children.SelectMany(ClassDefinitionsIn));
+                .Concat(children.SelectMany(ClassDefinitionsIn))
+                .ToList();
         }
 
         private static CSharpParser.Compilation_unitContext CompilationUnitOf(TextReader streamReader)

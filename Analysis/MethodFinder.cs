@@ -15,7 +15,7 @@ namespace CSharpAnalysis
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
         {
-            if (!context.IsMethodDeclarationTree()) return base.VisitClass_member_declaration(context);
+            if (!context.IsMethodDeclaration()) return base.VisitClass_member_declaration(context);
 
             var methodDetails = new MethodDetails
             {
@@ -30,7 +30,7 @@ namespace CSharpAnalysis
 
         public override int VisitStruct_member_declaration(CSharpParser.Struct_member_declarationContext context)
         {
-            if (!context.IsMethodDeclarationTree()) return base.VisitStruct_member_declaration(context);
+            if (!context.IsMethodDeclaration()) return base.VisitStruct_member_declaration(context);
 
             var methodDetails = new MethodDetails
             {
@@ -45,15 +45,13 @@ namespace CSharpAnalysis
 
         private static string MethodName(IParseTree context)
         {
-            var grandChildren = context.GrandChildren().ToList();
-
-            var methodDeclaration = grandChildren
-                .Where(grandChild => grandChild.IsMethodDeclarationTree())
-                .Concat(grandChildren
-                    .Where(grandChild => grandChild is CSharpParser.Typed_member_declarationContext)
-                    .SelectMany(grandChild => grandChild.ChildrenWhere(child => child.IsMethodDeclarationTree()))
+            var methodDeclaration = context
+                .GrandChildrenOfType<CSharpParser.Method_declarationContext>()
+                .Concat(context
+                    .GrandChildrenOfType<CSharpParser.Typed_member_declarationContext>()
+                    .SelectMany(grandChild => grandChild.ChildrenOfType<CSharpParser.Method_declarationContext>())
                 )
-                .FirstOrDefault() as CSharpParser.Method_declarationContext;
+                .FirstOrDefault();
 
             if (methodDeclaration == null) return string.Empty;
 

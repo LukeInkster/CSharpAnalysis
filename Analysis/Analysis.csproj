@@ -54,7 +54,6 @@
     <Compile Include="ClassAnalysis.cs" />
     <Compile Include="Corpus.cs" />
     <Compile Include="ClassVisitor.cs" />
-    <Compile Include="FileAnalysis.cs" />
     <Compile Include="GeneratedFiles\CSharpLexer.cs" />
     <Compile Include="GeneratedFiles\CSharpParser.cs" />
     <Compile Include="GeneratedFiles\CSharpParserBaseListener.cs" />

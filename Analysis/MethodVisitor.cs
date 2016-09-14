@@ -29,20 +29,20 @@ namespace CSharpAnalysis
 
         private static string ClassName(CSharpParser.Class_definitionContext context)
         {
-            return context
+            return Format(context
                 .ChildrenOfType<CSharpParser.IdentifierContext>()
                 .FirstOrDefault()
-                ?.GetText();
+                ?.GetText());
         }
 
         private static string SuperClassName(CSharpParser.Class_definitionContext context)
         {
-            return context
+            return Format(context
                 .ChildrenOfType<CSharpParser.Class_baseContext>()
                 .FirstOrDefault()
                 ?.ChildrenOfType<CSharpParser.Class_typeContext>()
                 ?.FirstOrDefault()
-                ?.GetText();
+                ?.GetText());
         }
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
@@ -124,7 +124,7 @@ namespace CSharpAnalysis
 
         private static string Format(string name)
         {
-            return name.Split('<')[0];
+            return name?.Split('<')[0];
         }
     }
 

@@ -67,7 +67,8 @@ namespace CSharpAnalysis
                         : null;
 
                     if (classToCheck.SuperClassName == null ||
-                        !_classNameToAnalysis.ContainsKey(classToCheck.SuperClassName)) break;
+                        !_classNameToAnalysis.ContainsKey(classToCheck.SuperClassName) ||
+                        classToCheck.ClassName == classToCheck.SuperClassName) break;
 
                     classToCheck = _classNameToAnalysis[classToCheck.SuperClassName].FirstPassDetails();
                 }

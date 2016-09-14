@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace CSharpAnalysis
 {
@@ -14,6 +13,7 @@ namespace CSharpAnalysis
         public bool ContainsLocalAbstractCallInConstructor { get; private set; }
         public bool ContainsLocalMethodCallInConstructor { get; private set; }
         public bool ContainsUntracedMethodCallInConstructor { get; private set; }
+        public bool HasSubclasses { get; private set; }
         public string SuperClassName => FirstPassDetails().SuperClassName;
         public string ClassName => FirstPassDetails().ClassName;
 
@@ -25,7 +25,7 @@ namespace CSharpAnalysis
             _classDef = classDef;
         }
 
-        public void Analyse(Dictionary<string, ClassAnalysis> classNameToAnalysis)
+        public void Analyse(Dictionary<string, ClassAnalysis> classNameToAnalysis, Dictionary<string, List<ClassAnalysis>> classNameToSubclasses)
         {
             // Visitors need to stay local scoped. It appears they keep a reference to the
             // trees they visit, so if we keep a reference to the visitor then we also
@@ -43,6 +43,7 @@ namespace CSharpAnalysis
             ContainsLocalOverrideCallInConstructor = visitor.ContainsLocalOverrideCallInConstructor;
             ContainsLocalAbstractCallInConstructor = visitor.ContainsLocalAbstractCallInConstructor;
             ContainsUntracedMethodCallInConstructor = visitor.ContainsUntracedMethodCallInConstructor;
+            HasSubclasses = classNameToSubclasses.ContainsKey(FirstPassDetails().ClassName);
 
             _classDef = null;
         }

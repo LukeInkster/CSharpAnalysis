@@ -5,7 +5,10 @@ namespace CSharpAnalysis
     public class Program
     {
         //private const string CorpusDirectory = @"C:\Dev\test\";
+        //private const string CorpusDirectory = @"C:\Dev\CSharpCorpus\mono\mcs";
         private const string CorpusDirectory = @"C:\Dev\CSharpCorpusMini\";
+        //private const string CorpusDirectory = @"C:\Dev\CSharpCorpusDotnet\";
+        //private const string CorpusDirectory = @"C:\Dev\CSharpCorpusLargerEight\";
         //private const string CorpusDirectory = @"C:\Dev\CSharpCorpusSuperMini\";
 
         public static void Main(string[] args)
@@ -17,6 +20,7 @@ namespace CSharpAnalysis
             Console.WriteLine("Files: " + corpus.FileCount);
             Console.WriteLine("Classes: " + corpus.ClassCount);
             Console.WriteLine("Extending Classes: " + corpus.ExtendingClassCount);
+            Console.WriteLine("Extended Classes: " + corpus.ExtendedClassCount);
             Console.WriteLine("Methods: " + corpus.MethodCount);
             Console.WriteLine("Virtual Methods: " + corpus.VirtualMethodCount);
             Console.WriteLine("Override Methods: " + corpus.OverrideMethodCount);

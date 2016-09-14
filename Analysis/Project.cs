@@ -21,6 +21,7 @@ namespace CSharpAnalysis
             ClassAnalyses = classDefinitions.Select(c => new ClassAnalysis(c)).ToList();
 
             var classNameToAnalysis = new Dictionary<string, ClassAnalysis>();
+            var classNameToSubclasses = new Dictionary<string, List<ClassAnalysis>>();
 
             foreach (var classAnalysis in ClassAnalyses)
             {
@@ -28,11 +29,20 @@ namespace CSharpAnalysis
                 classAnalysis.FirstPassDetails();
                 // Then put it in a map so other analyses can find it
                 classNameToAnalysis[classAnalysis.ClassName] = classAnalysis;
+
+                if (classAnalysis.SuperClassName != null)
+                {
+                    if (!classNameToSubclasses.ContainsKey(classAnalysis.SuperClassName))
+                    {
+                        classNameToSubclasses[classAnalysis.SuperClassName] = new List<ClassAnalysis>();
+                    }
+                    classNameToSubclasses[classAnalysis.SuperClassName].Add(classAnalysis);
+                }
             }
 
             foreach (var classAnalysis in ClassAnalyses)
             {
-                classAnalysis.Analyse(classNameToAnalysis);
+                classAnalysis.Analyse(classNameToAnalysis, classNameToSubclasses);
             }
         }
 
@@ -71,6 +81,7 @@ namespace CSharpAnalysis
             var commentTokens = new List<IToken>();
 
             var preprocessorLexer = new CSharpLexer(inputStream);
+            preprocessorLexer.RemoveErrorListeners();
             // Collect all tokens with lexer (CSharpLexer.g4).
             var tokens = preprocessorLexer.GetAllTokens();
             var directiveTokens = new List<IToken>();
@@ -125,6 +136,7 @@ namespace CSharpAnalysis
             var codeTokenSource = new ListTokenSource(tokens);
             var codeTokenStream = new CommonTokenStream(codeTokenSource);
             var parser = new CSharpParser(codeTokenStream);
+            parser.RemoveErrorListeners();
             // Parse syntax tree (CSharpParser.g4)
             return parser.compilation_unit();
         }

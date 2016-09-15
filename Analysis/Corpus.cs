@@ -7,8 +7,9 @@ namespace CSharpAnalysis
     public class Corpus
     {
         public readonly List<Project> Projects;
-        public IEnumerable<ClassAnalysis> AllClassAnalyses => Projects
-                .SelectMany(p => p.ClassAnalyses);
+        public List<ClassAnalysis> AllClassAnalyses => Projects
+            .SelectMany(p => p.ClassAnalyses)
+            .ToList();
 
         public int ProjectCount => Projects.Count;
         public int FileCount => Projects.Sum(p => p.FileCount);
@@ -18,6 +19,7 @@ namespace CSharpAnalysis
         public int MethodCount => AllClassAnalyses.Sum(c => c.MethodCount);
         public int VirtualMethodCount => AllClassAnalyses.Sum(c => c.VirtualMethodCount);
         public int OverrideMethodCount => AllClassAnalyses.Sum(c => c.OverrideMethodCount);
+        public int DelegateCount => AllClassAnalyses.Sum(c => c.DelegateCount);
         public int ClassesWithVirtualDowncallsInConstructorsCount
             => AllClassAnalyses.Count(c => c.ContainsLocalVirtualCallInConstructor);
         public int ClassesWithOverrideDowncallsInConstructorsCount

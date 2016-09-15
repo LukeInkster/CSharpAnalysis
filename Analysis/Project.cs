@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
@@ -11,7 +12,9 @@ namespace CSharpAnalysis
         public readonly List<ClassAnalysis> ClassAnalyses;
 
         public int FileCount { get; private set; }
-        public int ClassCount => ClassAnalyses.Count();
+        public int ClassCount => ClassAnalyses.Count;
+
+        public static Dictionary<int, int> SubclassCountToFrequency = new Dictionary<int, int>();
 
         public Project(string projectDirectory)
         {
@@ -39,18 +42,31 @@ namespace CSharpAnalysis
                     classNameToSubclasses[classAnalysis.SuperClassName].Add(classAnalysis);
                 }
             }
+            
+            foreach (var classNameToSubclass in classNameToSubclasses)
+            {
+                if (!SubclassCountToFrequency.ContainsKey(classNameToSubclass.Value.Count))
+                {
+                    SubclassCountToFrequency[classNameToSubclass.Value.Count] = 0;
+                }
+                SubclassCountToFrequency[classNameToSubclass.Value.Count] += 1;
+            }
 
             foreach (var classAnalysis in ClassAnalyses)
             {
                 classAnalysis.Analyse(classNameToAnalysis, classNameToSubclasses);
             }
+
+            Console.WriteLine(classNameToSubclasses.Count + " Class names to subclasses");
+            Console.WriteLine(classNameToAnalysis.Count + " Class names to analysis");
         }
 
         private static IEnumerable<CSharpParser.Class_definitionContext> ClassDefinitions(string file)
         {
             using (var fileStream = new StreamReader(file))
             {
-                return ClassDefinitionsIn(CompilationUnitOf(fileStream));
+                var defs = ClassDefinitionsIn(CompilationUnitOf(fileStream));
+                return defs;
             }
         }
 
@@ -60,6 +76,7 @@ namespace CSharpAnalysis
                 path: dir,
                 searchPattern: "*.cs",
                 searchOption: SearchOption.AllDirectories)
+                //.Take(1000)
                 .ToList();
         }
 

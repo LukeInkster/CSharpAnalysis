@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CSharpAnalysis
 {
@@ -8,6 +10,7 @@ namespace CSharpAnalysis
         public int MethodCount { get; private set; }
         public int VirtualMethodCount { get; private set; }
         public int OverrideMethodCount { get; private set; }
+        public int DelegateCount { get; private set; }
         public bool ContainsLocalVirtualCallInConstructor { get; private set; }
         public bool ContainsLocalOverrideCallInConstructor { get; private set; }
         public bool ContainsLocalAbstractCallInConstructor { get; private set; }
@@ -38,13 +41,18 @@ namespace CSharpAnalysis
             MethodCount = visitor.MethodCount;
             VirtualMethodCount = visitor.VirtualMethodCount;
             OverrideMethodCount = visitor.OverrideMethodCount;
+            DelegateCount = FirstPassDetails().AllMethodDetails.Values.Count(method => method.IsDelegate);
             ContainsLocalMethodCallInConstructor = visitor.ContainsLocalMethodCallInConstructor;
             ContainsLocalVirtualCallInConstructor = visitor.ContainsLocalVirtualCallInConstructor;
             ContainsLocalOverrideCallInConstructor = visitor.ContainsLocalOverrideCallInConstructor;
             ContainsLocalAbstractCallInConstructor = visitor.ContainsLocalAbstractCallInConstructor;
             ContainsUntracedMethodCallInConstructor = visitor.ContainsUntracedMethodCallInConstructor;
             HasSubclasses = classNameToSubclasses.ContainsKey(FirstPassDetails().ClassName);
-
+            if (HasSubclasses)
+            Console.WriteLine(string.Concat(_classDef.GetText().Take(50)) + " : "
+                + FirstPassDetails().SuperClassName + " : "
+                + classNameToSubclasses[FirstPassDetails().ClassName].First().ClassName + " : "
+                + HasSubclasses);
             _classDef = null;
         }
 

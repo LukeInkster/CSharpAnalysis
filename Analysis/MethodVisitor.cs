@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime.Tree;
 
@@ -19,8 +20,8 @@ namespace CSharpAnalysis
         {
             if (_alreadyInClass) return 0;
 
+            Console.WriteLine("test");
             _alreadyInClass = true;
-
             FirstPassDetails.ClassName = ClassName(context);
             FirstPassDetails.SuperClassName = SuperClassName(context);
 
@@ -37,12 +38,20 @@ namespace CSharpAnalysis
 
         private static string SuperClassName(CSharpParser.Class_definitionContext context)
         {
-            return Format(context
+            var superClassName = Format(context
                 .ChildrenOfType<CSharpParser.Class_baseContext>()
                 .FirstOrDefault()
                 ?.ChildrenOfType<CSharpParser.Class_typeContext>()
                 ?.FirstOrDefault()
                 ?.GetText());
+
+            if (superClassName == null || superClassName.Length < 2 ||
+                superClassName[0] == 'I' && char.IsUpper(superClassName[1]))
+            {
+                return null;
+            }
+
+            return superClassName;
         }
 
         public override int VisitClass_member_declaration(CSharpParser.Class_member_declarationContext context)
@@ -124,7 +133,7 @@ namespace CSharpAnalysis
 
         private static string Format(string name)
         {
-            return name?.Split('<')[0];
+            return name;//?.Split('<')[0];
         }
     }
 
